@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html ng-app="orderApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Management - eShop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; }
+    h3 { color: #2c3e50; font-weight: 600; }
+    .badge { font-size: 0.85rem; }
+    .table thead th { background-color: #2c3e50; color: white; }
+    .modal-title { color: #2c3e50; }
+    .btn-outline-secondary { border-color: #6c757d; }
+    .btn-outline-secondary:hover { background-color: #6c757d; color: white; }
+    .filter-box input, .filter-box select {
+      border-radius: 6px;
+      border: 1px solid #ced4da;
+    }
+  </style>
+</head>
+<body ng-controller="orderCtrl" class="bg-light">
+
+<div class="container mt-4">
+  <h3 class="mb-4 text-center">📦 Order Management Dashboard (Admin) </h3>
+
+  <!-- Filters -->
+  <div class="row g-3 mb-4 filter-box">
+    <div class="col-md-3">
+      <input class="form-control" ng-model="searchText" placeholder="🔍 Search orders...">
+    </div>
+    <div class="col-md-1">
+      <input type="date" class="form-control" ng-model="startDate">
+    </div>
+    <div class="col-md-1">
+      <input type="date" class="form-control" ng-model="endDate">
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" ng-model="filterStatus">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Shipped">Shipped</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </div>
+
+    <div class="col-md-2"><button class="btn btn-primary btn-sm me-1" onclick="window.location.href='dashboard.html'">Back to dashboard</button></div>
+
+    <div class="col-md-2 text-end">
+      <button class="btn btn-success btn-sm me-1" ng-click="exportOrders()">Export CSV</button>
+      <button class="btn btn-outline-primary btn-sm" ng-click="markAllShipped()">Mark Shipped</button>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle">
+      <thead>
+        <tr>
+          <th><input type="checkbox" ng-model="selectAll" ng-click="toggleAllSelection()"></th>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Mobile</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="o in filteredOrders.slice(startIndex, startIndex + itemsPerPage)">
+          <td><input type="checkbox" ng-model="o.selected"></td>
+          <td ng-click="openOrderDetails(o)" style="cursor:pointer;"><span class="text-primary me-1">see
+        <i class="bi bi-info-circle-fill"></i>
+      </span>{{o.id}}</td>
+          <td>{{o.customer}}</td>
+          <td>{{o.mobile}}</td>
+          <td>₹{{o.total}}</td>
+          <td>
+            <span class="badge bg-success" ng-if="o.status == 'Shipped'">{{o.status}}</span>
+            <span class="badge bg-warning text-dark" ng-if="o.status == 'Pending'">{{o.status}}</span>
+            <span class="badge bg-danger" ng-if="o.status == 'Cancelled'">{{o.status}}</span>
+          </td>
+          <td>{{o.date}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="d-flex justify-content-between align-items-center mt-2">
+    <div>
+      Showing {{startIndex + 1}} - {{Math.min(startIndex + itemsPerPage, filteredOrders.length)}} of {{filteredOrders.length}} orders
+    </div>
+    <div>
+      <button class="btn btn-outline-secondary btn-sm me-2" ng-disabled="currentPage == 0" ng-click="prevPage()">Previous</button>
+      <button class="btn btn-outline-secondary btn-sm" ng-disabled="startIndex + itemsPerPage >= filteredOrders.length" ng-click="nextPage()">Next</button>
+    </div>
+  </div>
+
+  <!-- Order Modal -->
+  <div class="modal" tabindex="-1" style="display:block" ng-if="showModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Order #{{selectedOrder.id}} Details</h5>
+          <button type="button" class="btn-close" ng-click="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6"><strong>Customer:</strong> {{selectedOrder.customer}}</div>
+            <div class="col-md-6"><strong>Mobile:</strong> {{selectedOrder.mobile}}</div>
+            <div class="col-md-12"><strong>Address:</strong> {{selectedOrder.address}}</div>
+            <div class="col-md-4"><strong>Payment:</strong> {{selectedOrder.payment}}</div>
+            <div class="col-md-4"><strong>Delivery:</strong> ₹{{selectedOrder.deliveryCharge}}</div>
+            <div class="col-md-4"><strong>Discount:</strong> ₹{{selectedOrder.discount}}</div>
+            <div class="col-md-4"><strong>Total:</strong> ₹{{selectedOrder.total}}</div>
+            <div class="col-md-4"><strong>Final Total:</strong> ₹{{selectedOrder.finalTotal}}</div>
+            <div class="col-md-4"><strong>Status:</strong>
+              <select class="form-select form-select-sm" ng-model="selectedOrder.status">
+                <option>Pending</option>
+                <option>Shipped</option>
+                <option>Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <hr>
+          <h6>Products:</h6>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item" ng-repeat="p in selectedOrder.products">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{p.name}}</strong><br>
+                  Size: {{p.size}}<br>
+                  Price: ₹{{p.price}}<br>
+                  Qty: {{p.quantity}}
+                </div>
+                <div><strong>Total:</strong> ₹{{p.price * p.quantity}}</div>
+              </div>
+            </li>
+          </ul>
+          <div class="text-end mt-2">
+            <strong>Total Products Amount: ₹{{ calculateProductsTotal(selectedOrder.products) }}</strong>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" ng-click="printInvoice(selectedOrder)">🖨️ Print</button>
+          <button class="btn btn-secondary" ng-click="closeModal()">Close</button>
+          <button class="btn btn-primary" ng-click="saveStatus()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+angular.module("orderApp", []).controller("orderCtrl", function($scope, $http) {
+  $scope.orders = [];
+  $scope.filteredOrders = [];
+  $scope.selectedOrder = {};
+  $scope.showModal = false;
+  $scope.selectAll = false;
+
+  $scope.currentPage = 0;
+  $scope.itemsPerPage = 5;
+  $scope.startIndex = 0;
+
+  $scope.loadOrders = function() {
+    $http.get("http://localhost:8086/orders/management/all").then(function(res) {
+      $scope.orders = res.data;
+      $scope.updateFilteredOrders();
+    });
+  };
+
+  $scope.updateFilteredOrders = function() {
+    const filtered = $scope.orders.filter(function(order) {
+      const searchMatch = !$scope.searchText || JSON.stringify(order).toLowerCase().includes($scope.searchText.toLowerCase());
+      const statusMatch = !$scope.filterStatus || order.status === $scope.filterStatus;
+      const dateMatch = $scope.dateInRange(order);
+      return searchMatch && statusMatch && dateMatch;
+    });
+
+    $scope.filteredOrders = filtered;
+    $scope.startIndex = $scope.currentPage * $scope.itemsPerPage;
+  };
+
+  $scope.$watchGroup(['searchText', 'filterStatus', 'startDate', 'endDate'], function() {
+    $scope.currentPage = 0;
+    $scope.updateFilteredOrders();
+  });
+
+  $scope.dateInRange = function(order) {
+    if (!$scope.startDate || !$scope.endDate) return true;
+    const d = new Date(order.date);
+    return d >= new Date($scope.startDate) && d <= new Date($scope.endDate);
+  };
+
+  $scope.openOrderDetails = function(order) {
+    $scope.selectedOrder = angular.copy(order);
+    $scope.showModal = true;
+  };
+
+  $scope.closeModal = function() {
+    $scope.showModal = false;
+  };
+
+  $scope.calculateProductsTotal = function(products) {
+    return products?.reduce((sum, p) => sum + (p.price * p.quantity), 0) || 0;
+  };
+
+  $scope.saveStatus = function() {
+    $http.put("http://localhost:8086/orders/management/" + $scope.selectedOrder.id, $scope.selectedOrder)
+      .then(() => {
+        $scope.loadOrders();
+        $scope.closeModal();
+      });
+  };
+
+  $scope.toggleAllSelection = function() {
+    $scope.orders.forEach(order => order.selected = $scope.selectAll);
+  };
+
+  $scope.markAllShipped = function() {
+    $scope.orders.forEach(order => {
+      if (order.selected) {
+        order.status = 'Shipped';
+        $http.put("http://localhost:8086/orders/management/" + order.id, order);
+      }
+    });
+    $scope.loadOrders();
+  };
+
+  $scope.exportOrders = function() {
+    const data = $scope.orders.map(o => ({
+      ID: o.id,
+      Customer: o.customer,
+      Mobile: o.mobile,
+      Total: o.total,
+      Status: o.status,
+      Date: o.date,
+      Address: o.address,
+      Payment: o.payment
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Orders");
+    XLSX.writeFile(wb, "Orders_List.xlsx");
+  };
+
+  $scope.printInvoice = function(order) {
+    const popup = window.open('', '_blank');
+    popup.document.write('<h3>Order Details</h3><pre>' + JSON.stringify(order, null, 2) + '</pre>');
+    popup.document.close();
+    popup.print();
+  };
+
+  $scope.nextPage = function() {
+    if ($scope.startIndex + $scope.itemsPerPage < $scope.filteredOrders.length) {
+      $scope.currentPage++;
+      $scope.startIndex = $scope.currentPage * $scope.itemsPerPage;
+    }
+  };
+
+  $scope.prevPage = function() {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage--;
+      $scope.startIndex = $scope.currentPage * $scope.itemsPerPage;
+    }
+  };
+
+  $scope.loadOrders();
+});
+</script>
+
+</body>
+</html>

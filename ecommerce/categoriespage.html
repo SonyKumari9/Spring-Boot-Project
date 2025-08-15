@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>eshopping - Categories</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+
+  <link rel="stylesheet" href="css/categoryitm.css">
+
+  
+
+
+</head>
+<body class="p-4" ng-controller="myCtrl">
+
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+    <a class="navbar-brand fw-bold text-primary" href="#">eShop</a>
+
+    <!-- Search -->
+    <form class="d-flex mx-auto" style="width: 50%;" ng-submit="search()">
+      <input class="form-control me-2" type="search" placeholder="Search for products" ng-model="searchText">
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+
+    <div>
+      <button class="btn btn-outline-success">
+        <a href="mainpage_eshopping.html" class="text-decoration-none text-success">Back App</a>
+      </button>
+      <button class="btn btn-outline-secondary me-2" ng-click="goToCart()">Cart</button>
+    </div>
+  </nav>
+
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-4">
+  <h5 class="mb-4">Product Categories</h5>
+  <div class="accordion" id="categoryAccordion">
+
+    <!-- Electronics Section -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingElectronics">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseElectronics">
+          Electronics
+        </button>
+      </h2>
+      <div id="collapseElectronics" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+        <div class="accordion-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex align-items-center">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('charger')">
+                <img src="images/charger/charger.jpg" class="category-img">
+                Charger
+              </a>
+            </li>
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('headphone')">
+                <img src="images/headphone/headphone.jpg" class="category-img">
+                Headphones
+              </a>
+            </li>
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('smartphone')">
+                <img src="images/smartphone/smartphone.jpg" class="category-img">
+                Smartphones
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Women & Western Section -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingWomen">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWomen">
+          Women & Western
+        </button>
+      </h2>
+      <div id="collapseWomen" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+        <div class="accordion-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('dress')">
+                <img src="images/dress/fork.jpg" class="category-img">
+                Dress
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Grocery -->
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingGrocery">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGrocery">
+          Grocery
+        </button>
+      </h2>
+      <div id="collapseGrocery" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+        <div class="accordion-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('grocery')">
+                <img src="images/grocery/grocery1.jpg" class="category-img">
+                Grocery
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  
+
+        <!-- Home & Kitchen -->
+         <div class="accordion-item">
+      <h2 class="accordion-header" id="headingCookware">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCookware">
+          Home & Kitchen
+        </button>
+      </h2>
+      <div id="collapseCookware" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+        <div class="accordion-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('cookware')">
+                <img src="images/cookware/c1.jpg" class="category-img">
+                Cookware
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Books -->
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingBook">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBook">
+          Books
+        </button>
+      </h2>
+      <div id="collapseBook" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+        <div class="accordion-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('books')">
+                <img src="images/books/book1.jpg" class="category-img">
+                Books
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Musical & Instruments -->
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingMusic">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMusic">
+          Musical & Instruments
+
+        </button>
+      </h2>
+      <div id="collapseMusic" class="accordion-collapse collapse" data-bs-parent="#categoryAccordion">
+        <div class="accordion-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('guitor')">
+                <img src="images/guitor/gitar1.jpg" class="category-img">
+                Guitars
+
+              </a>
+            </li>
+
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('keyboards')">
+                <img src="images/Keyboards/k1.jpg" class="category-img">
+                Keyboards
+              </a>
+            </li>
+
+            <li class="list-group-item">
+              <a href="#" class="d-flex align-items-center text-decoration-none text-dark" ng-click="loadImages('microphones')">
+                <img src="images/microphones/m1.jpg" class="category-img">
+                Microphones
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+
+    
+
+  </div>
+</div>
+
+
+    <!-- Content area -->
+    <div class="col-md-8">
+      <h2>Product Images Showing</h2>
+      <p>All Itms </p>
+
+      <div class="d-flex flex-wrap gap-3" ng-if="selectedImages.length > 0">
+        <div class="img-wrapper" ng-repeat="item in selectedImages">
+          <img ng-src="{{item.url}}"
+               class="thumbnail-img shadow"
+               ng-click="selectImage(item)"
+               ng-class="{'border border-primary border-3': selectedImage === item}"
+               style="cursor:pointer;">
+          <div><strong>{{item.brand}}</strong></div>
+          <div ng-if="item.author=='books'">{{item.author}}</div>
+          <div>₹{{item.price}}</div>
+        </div>
+      </div>
+
+      <div class="mt-3" ng-if="selectedImage">
+        <button class="btn btn-success" ng-click="saveCategory()">Save Selected Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- AngularJS Controller -->
+  <script>
+  angular.module('myApp', [])
+    .controller('myCtrl', function ($scope, $http) {
+      $scope.selectedImages = [];
+      $scope.selectedImage = null;
+
+      const brandData = {
+        headphone: [
+          { brand: "Boat", price: 999 },
+          { brand: "Sony", price: 3499 },
+          { brand: "JBL", price: 2799 },
+          { brand: "Realme", price: 1299 }
+        ],
+        charger: [
+          { brand: "Samsung", price: 599 },
+          { brand: "MI", price: 499 },
+          { brand: "OnePlus", price: 899 },
+          { brand: "Ambrane", price: 399 }
+        ],
+        smartphone: [
+          { brand: "Apple", price: 70000 },
+          { brand: "Samsung", price: 55000 },
+          { brand: "OnePlus", price: 38000 },
+          { brand: "Vivo", price: 25000 }
+        ],
+        dress: [
+              { brand: "Biba", price: 1299 },
+              { brand: "FabIndia", price: 1799 },
+              { brand: "Aurelia", price: 999 },
+              { brand: "W for Woman", price: 1499 },
+              { brand: "Global Desi", price: 1999 },
+              { brand: "AND", price: 1899 },
+              { brand: "Zara", price: 2499 },
+              { brand: "H&M", price: 1599 },
+              { brand: "Max", price: 899 },
+              { brand: "Pantaloons", price: 1099 },
+              { brand: "Forever 21", price: 1399 },
+              { brand: "Van Heusen", price: 1699 },
+              { brand: "Vero Moda", price: 1899 },
+              { brand: "Only", price: 1599 }
+              ], 
+
+              grocery: [
+                      { brand: "Aashirvaad Atta", price: 240 },
+                      { brand: "Fortune Rice Bran Oil", price: 155 },
+                      { brand: "Tata Salt", price: 25 },
+                      { brand: "India Gate Basmati Rice", price: 350 },
+                      { brand: "Nestlé Everyday Dairy Whitener", price: 190 },
+                      { brand: "Brooke Bond Red Label Tea", price: 280 },
+                      { brand: "Tata Sampann Toor Dal", price: 145 },
+                      { brand: "Parachute Coconut Oil", price: 120 },
+                      { brand: "MTR Instant Poha", price: 55 },
+                      { brand: "Haldiram’s Moong Dal", price: 35 },
+                      { brand: "Patanjali Ghee", price: 565 },
+                      { brand: "Kissan Mixed Fruit Jam", price: 135 },
+                      { brand: "Amul Cheese Slices", price: 145 },
+                      { brand: "Maggi Masala Noodles", price: 14 }
+                    ],
+
+                    cookware: [
+                                { brand: "Prestige Fry Pan", price: 799 },
+                                { brand: "Hawkins Pressure Cooker", price: 1450 },
+                                { brand: "Pigeon Non-Stick Tawa", price: 649 },
+                                { brand: "Wonderchef Casserole", price: 1250 },
+                                { brand: "Butterfly Kadhai", price: 950 },
+                                { brand: "Borosil Glass Bowl", price: 499 },
+                                { brand: "Milton Casserole", price: 1199 },
+                                { brand: "Vinod Steel Pan", price: 899 },
+                                { brand: "Cello Hot Pot", price: 749 },
+                                { brand: "Nirlon Cookware Set", price: 1599 }
+                              ], 
+
+                              books: [
+                                      { brand: "The Alchemist", author: "Paulo Coelho", price: 299 },
+                                      { brand: "Wings of Fire", author: "A.P.J. Abdul Kalam", price: 350 },
+                                      { brand: "Ikigai", author: "Héctor García & Francesc Miralles", price: 450 },
+                                      { brand: "Rich Dad Poor Dad", author: "Robert Kiyosaki", price: 399 },
+                                      { brand: "Sapiens", author: "Yuval Noah Harari", price: 550 },
+                                      { brand: "The Power of Your Subconscious Mind", author: "Joseph Murphy", price: 299 },
+                                      { brand: "Atomic Habits", author: "James Clear", price: 499 },
+                                      { brand: "Think and Grow Rich", author: "Napoleon Hill", price: 399 },
+                                      { brand: "You Can Win", author: "Shiv Khera", price: 299 },
+                                      { brand: "Do Epic Shit", author: "Ankur Warikoo", price: 349 }
+                                    ],
+
+                                    keyboards: [
+                                                  { brand: "Casio CT-X700", price: 9999 },
+                                                  { brand: "Yamaha PSR-E373", price: 11999 },
+                                                  { brand: "Roland GO:KEYS", price: 24999 },
+                                                  { brand: "Alesis Harmony 61", price: 13499 },
+                                                  { brand: "Korg B2", price: 29999 }
+                                                ],
+
+                                                guitor: [
+                                                  { brand: "Fender Squier Strat", price: 14499 },
+                                                  { brand: "Yamaha F310", price: 8999 },
+                                                  { brand: "Ibanez GRX40", price: 15999 },
+                                                  { brand: "Cort AD810", price: 11999 },
+                                                  { brand: "Kadence Frontier", price: 6999 }
+                                                ],
+
+                                                microphones: [
+                                                  { brand: "Blue Yeti", price: 10999 },
+                                                  { brand: "Rode NT1-A", price: 19999 },
+                                                  { brand: "Shure SM58", price: 8999 },
+                                                  { brand: "Maono AU-A04", price: 4999 },
+                                                  { brand: "Audio-Technica AT2020", price: 9999 }
+                                                ]
+
+
+
+
+
+      };
+
+      $scope.loadImages = function (folderName) {
+        $http.get("http://localhost:8086/categories/v6/images/" + folderName)
+          .then(function (response) {
+            const brands = brandData[folderName] || [];
+            $scope.selectedImages = response.data.map((imgUrl, index) => ({
+              url: imgUrl,
+              brand: brands[index % brands.length]?.brand || "Brand",
+              price: brands[index % brands.length]?.price || 0,
+              author: brands[index % brands.length]?.author || "Author"
+            }));
+            $scope.selectedImage = null;
+            $scope.selectedFolder = folderName;
+          });
+      };
+
+      $scope.selectImage = function (item) {
+        $scope.selectedImage = item;
+      };
+
+      $scope.saveCategory = function () {
+        if (!$scope.selectedImage || !$scope.selectedFolder) {
+          alert("Please select an image first.");
+          return;
+        }
+
+        const data = {
+          categoryTitle: $scope.selectedFolder.charAt(0).toUpperCase() + $scope.selectedFolder.slice(1),
+          categoryDescription: $scope.selectedImage.brand + " - ₹" + $scope.selectedImage.price + $scope.selectedImage.author,
+          imageUrl: $scope.selectedImage.url,
+          brand: $scope.selectedImage.brand,  
+          price: $scope.selectedImage.price,
+          author: $scope.selectedImage.author     
+        };
+
+        $http.post("http://localhost:8086/categories/v6/saveitm", data)
+          .then(() => {
+            alert("Item saved successfully!");
+          }, () => {
+            alert("Failed to save item.");
+          });
+
+
+          
+      };
+    });
+</script>
+
+</body>
+</html>

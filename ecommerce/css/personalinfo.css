@@ -1,0 +1,17 @@
+
+    body {
+      background-color: #f4f6f9;
+    }
+    .form-container {
+      background: #fff;
+      padding: 30px;
+      margin-top: 50px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(12, 5, 5, 0.1);
+    }
+    .form-title {
+      margin-bottom: 25px;
+      font-weight: 700;
+      color: #1c2c3d;
+    }
+  

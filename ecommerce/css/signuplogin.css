@@ -1,0 +1,33 @@
+
+    body {
+      background: linear-gradient(to right, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #signuploginForm {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    #signuploginForm input {
+      margin-bottom: 1rem;
+    }
+
+    #signuploginForm button {
+      background-color: #6c63ff;
+      color: white;
+      border: none;
+    }
+
+    #signuploginForm button:hover {
+      background-color: #574fd6;
+    }
+  

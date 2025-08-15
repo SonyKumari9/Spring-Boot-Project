@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sony Kumari Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; scroll-behavior: smooth; }
+    nav { background-color: #0077b6; }
+    nav a { color: white !important; font-weight: 500; margin: 0 15px; }
+    nav a:hover { color: #ffe600 !important; }
+    .hero { padding: 100px 20px; background: linear-gradient(to right, #caf0f8, #ffffff); text-align: center; }
+    .hero h1 { font-size: 3rem; }
+    .section-title { font-weight: bold; margin-bottom: 30px; color: #0077b6; text-align: center; }
+    .skills i, .services i, .projects i { font-size: 2rem; margin-bottom: 10px; color: #00b4d8; }
+    .skills, .services, .projects { padding: 60px 20px; background: #f1f9ff; }
+    .about, .contact { padding: 60px 20px; }
+    footer { background: #0077b6; color: white; padding: 15px 0; text-align: center; }
+    .nav-link.active { text-decoration: underline; }
+    .profile-pic { width: 140px; border-radius: 50%; margin-bottom: 20px; border: 3px solid #00b4d8; }
+    
+    .skills img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  background-color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+.skills img:hover {
+  transform: scale(1.15);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+.skills p {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* Floating Animation */
+@keyframes floatIcon {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.projects .card {
+  transition: transform 0.4s ease, box-shadow 0.3s ease;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.projects .card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.projects .card-img-top {
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+
+.typed-role {
+  font-weight: bold;
+  border-bottom: 2px solid #00b4d8;
+  white-space: nowrap;
+  display: inline-block;
+  overflow: hidden;
+  width: 0;
+  animation: blink-caret 0.75s step-end infinite;
+}
+
+@keyframes blink-caret {
+  50% {
+    border-color: transparent;
+  }
+}
+
+
+
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Sony Kumari</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+      aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+        <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactInfoModal">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="hero text-center py-5" id="home"
+         style="background: linear-gradient(to right, #e0f7fa, #ffffff); position: relative; overflow: hidden; border-bottom: 2px solid #dee2e6;">
+         
+  
+  <!-- Decorative Shapes (Smaller, Light) -->
+  <div style="position: absolute; top: -30px; left: -30px; width: 100px; height: 100px; background: #90e0ef; border-radius: 50%; opacity: 0.2;"></div>
+  <div style="position: absolute; bottom: -30px; right: -30px; width: 100px; height: 100px; background: #0077b6; border-radius: 50%; opacity: 0.1;"></div>
+
+  <div class="container"  style="backdrop-filter: blur(8px); background-color: rgba(255,255,255,0.2); 
+     border-radius: 15px; padding: 30px; box-shadow: 0 4px 30px rgba(0,0,0,0.1); 
+     max-width: 600px; margin: auto; margin-top: 50px; z-index: 1; position: relative;">
+
+    <h5 class="text-muted mt-5" style="font-size: 1.1rem;">Hello! I'm</h5>
+    <h2 class="fw-bold text-dark mb-2" style="font-size: 2.2rem;">Sony Kumari</h2>
+    
+    <h5 class="text-info mb-3" style="font-size: 1.1rem;">
+      I'm a <span class="typed-role text-primary fw-semibold"></span>
+    </h5>
+
+    <p class="text-secondary mx-auto mb-3" style="max-width: 500px; font-size: 0.95rem;">
+      " A passionate software engineer focused on <strong>Developing full-stack web applications </strong>and delivering intuitive, user-centric web applications."
+    </p>
+
+    <a href="#contact" class="btn btn-sm btn-success px-4 py-2 shadow-sm">
+      <i class="bi bi-envelope-fill me-1"></i> Hire Me
+    </a>
+  </div>
+
+</section>
+
+
+
+<!-- Skills -->
+<section class="skills" id="skills"  >
+  <h2 class="section-title">My Skills</h2>
+  <div class="row text-center justify-content-center">
+    <!-- Skill Block -->
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" width="50">
+      <p>Java</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" alt="Spring Boot" width="50">
+      <p>Spring Boot</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" alt="Spring MVC" width="50">
+      <p>Spring MVC</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" alt="AngularJS" width="50">
+      <p>AngularJS</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" width="50">
+      <p>JavaScript</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" width="50">
+      <p>PostgreSQL</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML" width="50">
+      <p>HTML</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS" width="50">
+      <p>CSS</p>
+    </div>
+
+    <div class="col-6 col-md-2 mb-4">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java 8" width="50">
+        <p>Java 8</p>
+        </div>
+
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" width="50">
+      <p>Git</p>
+    </div>
+    <div class="col-6 col-md-2 mb-4">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" width="50">
+      <p>GitHub</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- Projects -->
+<!-- My Projects -->
+<section id="projects" class="projects py-5 bg-light" 
+style="background: linear-gradient(to right, #e0f7fa, #ffffff); position: relative; overflow: hidden; border-bottom: 2px solid #dee2e6;">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">My Projects</h2>
+    <div class="row">
+
+      <!-- Online Shopping App -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm project-card">
+      <div style="margin-left: 15px;"><h4>Online Shopping App</h4></div>
+      <img src="http://localhost:8086/images/myproject_image.jpg" class="card-img-top" alt="E-Commerce Platform"
+           style="width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #ddd;">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="account_creation_mainpage.html" class="text-decoration-none text-primary">
+            🛒 E-Commerce Platform
+          </a>
+        </h5>
+        <p class="card-text">The e-commerce website with full cart, wishlist, order flow using Spring Boot, AngularJS, PostgreSQL.</p>
+        <p><strong>Stacks Used:</strong> Spring Boot, AngularJS, PostgreSQL, HTML, CSS</p>
+      </div>
+    </div>
+  </div>
+
+
+      <!-- SBI ATM UI Clone -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm project-card">
+      <div style="margin-left: 15px;"><h4>SBI ATM App Clone</h4></div>
+      <img src="http://localhost:8086/images/atm_logo.jpg"  class="card-img-top" alt="ATM UI"
+           style="width: 47%; height: 200px; object-fit: cover; border-bottom: 1px solid #ddd;">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="index_sbi.html" class="text-decoration-none text-primary">
+          📲 SBI ATM App UI
+        </a>
+        </h5>
+        <p class="card-text">Designed a modern mobile banking interface clone using Figma, Bootstrap & HTML/CSS.</p>
+        <p><strong>Stacks Used:</strong> Figma, Bootstrap, HTML, CSS</p>
+      </div>
+    </div>
+  </div>
+
+     <!-- Portfolio Hotel Clone -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm project-card">
+      <div style="margin-left: 15px;"><h4>Hotel Management Clone</h4></div>
+      <img src="http://localhost:8086/images/hotel_logo.jpg" class="card-img-top" alt="Hotel Portfolio"
+           style="width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid #ddd;">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="index_hotel.html" class="text-decoration-none text-primary">
+          💼 Hotel Management Portfolio
+          </a>
+        </h5>
+        <p class="card-text">Personal portfolio website styled for hotel management system using AngularJS & Bootstrap.</p>
+        <p><strong>Stacks Used:</strong> AngularJS, HTML, CSS, Bootstrap</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BBMKU Education Platform -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <a href="https://www.bbmkuniv.in/login" class="text-decoration-none text-primary">
+  <div class="card h-100 shadow-sm project-card">
+    <div style="margin-left: 15px;"><h4>BBMKU University</h4></div>
+    <img src="http://localhost:8086/images/bbmku_logo.jpg" class="card-img-top" alt="BBMKU Project"
+         style="width: 50%; height: 200px; object-fit: cover; border-bottom: 1px solid #ddd;">
+    <div class="card-body">
+      <h5 class="card-title">🎓 Education Portal - BBMKU</h5>
+      <p class="card-text">An education agency platform for <strong>Binod Bihari Mahto Koyalanchal University </strong>managing admission, exam forms, payments, and result processing.</p>
+      <p><strong>Stacks Used:</strong> Spring Boot, AngularJS, SQL Server, HTML, CSS</p>
+    </div>
+  </div>
+</a>
+
+</div>
+
+<!-- Kolhan University -->
+
+<div class="col-md-6 col-lg-4 mb-4">
+  <a href="https://kuuniv.in/login" class="text-decoration-none text-primary">
+  <div class="card h-100 shadow-sm project-card">
+    <div style="margin-left: 15px;"><h4>Kolhan University</h4></div>
+    <img src="http://localhost:8086/images/kolhan_logo.jpg" class="card-img-top" alt="Kolhan Project"
+         style="width: 50%; height: 200px; object-fit: cover; border-bottom: 1px solid #ddd;">
+    <div class="card-body">
+      <h5 class="card-title">🎓 Kolhan University ERP</h5>
+      <p class="card-text">End-to-end university management including admit cards, internal marks, migration, and degree modules.</p>
+      <p><strong>Stacks Used:</strong> Spring Boot, AngularJS, PostgreSQL, HTML, CSS</p>
+    </div>
+  </div>
+  </a>
+</div>
+
+<!-- Ranchi University -->
+
+<div class="col-md-6 col-lg-4 mb-4">
+  <a href="https://www.exam.ranchiuniversity.co.in/home" class="text-decoration-none text-primary">
+  <div class="card h-100 shadow-sm project-card">
+    <div style="margin-left: 15px;"><h4>Ranchi University</h4></div>
+    <img src="http://localhost:8086/images/ranchi_logo.jpg" class="card-img-top" alt="Ranchi College"
+         style="width: 50%; height: 200px; object-fit: cover; border-bottom: 1px solid #ddd;">
+    <div class="card-body">
+      <h5 class="card-title">🎓 Ranchi University Portal</h5>
+      <p class="card-text">Digitized platform for managing registration, exam form submissions, OMR checking, and results.</p>
+      <p><strong>Stacks Used:</strong> Spring Boot, AngularJS, SQL Server, HTML, Bootstrap</p>
+    </div>
+  </div>
+  </a>
+</div>
+
+
+
+
+
+
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Services -->
+<section class="services py-5 bg-light" id="services">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">
+      My Services <br>
+      <small style="color: black; font-size: 18px;">What I Provide</small>
+    </h2>
+    <div class="row g-4 text-center">
+
+      <!-- UI/UX & Web Designing -->
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 shadow-sm h-100 bg-white">
+          <i class="bi bi-palette-fill display-5 text-primary mb-3"></i>
+          <h5 class="fw-bold mb-2">UI/UX & Web Designing</h5>
+          <p class="text-muted">
+            Crafting responsive, user-centric web interfaces using modern HTML, CSS, and JavaScript frameworks. 
+            Ensuring seamless user experience with pixel-perfect designs aligned to brand goals.
+          </p>
+        </div>
+      </div>
+
+      <!-- Development & Integration -->
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 shadow-sm h-100 bg-white">
+          <i class="bi bi-code-slash display-5 text-success mb-3"></i>
+          <h5 class="fw-bold mb-2">Backend Development</h5>
+          <p class="text-muted">
+            Developing scalable REST APIs using Spring Boot, integrating secure payment modules, 
+            and managing real-time business logic implementation for service-based applications.
+          </p>
+        </div>
+      </div>
+
+      <!-- Testing & Deployment -->
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 shadow-sm h-100 bg-white">
+          <i class="bi bi-box-arrow-up-right display-5 text-info mb-3"></i>
+          <h5 class="fw-bold mb-2">Testing & Deployment</h5>
+          <p class="text-muted">
+            Conducting rigorous unit testing, bug fixing, and CI/CD-based deployments. 
+            Ensuring optimized performance and zero-downtime production releases using Git, Jenkins & Spring tools.
+          </p>
+        </div>
+      </div>
+
+      <!-- Database Management -->
+      <div class="col-md-6">
+        <div class="p-4 border rounded-4 shadow-sm h-100 bg-white">
+          <i class="bi bi-database-check display-5 text-warning mb-3"></i>
+          <h5 class="fw-bold mb-2">Database Management</h5>
+          <p class="text-muted">
+            Designing and maintaining complex database schemas using PostgreSQL & SQL Server.
+            Implementing secure data operations, migration scripts, and performance optimization.
+          </p>
+        </div>
+      </div>
+
+      <!-- Full Project Lifecycle -->
+      <div class="col-md-6">
+        <div class="p-4 border rounded-4 shadow-sm h-100 bg-white">
+          <i class="bi bi-diagram-3-fill display-5 text-danger mb-3"></i>
+          <h5 class="fw-bold mb-2">End-to-End Project Delivery</h5>
+          <p class="text-muted">
+            Collaborating with cross-functional teams from planning to production.
+            Delivering education domain platforms and enterprise systems with complete ownership from design to deployment.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<!-- About Me -->
+<section class="about py-5" id="about">
+  <div class="container">
+    <h2 class="section-title text-center mb-4">
+      About Me <br>
+      <small class="text-muted fs-5">Who Am I...</small>
+    </h2>
+
+    <div class="row align-items-center justify-content-center">
+      <!-- Image -->
+      <div class="col-md-5 text-center mb-4 mb-md-0">
+        <img src="http://localhost:8086/images/mypic.jpeg"
+     alt="Sony Kumari"
+     class="border border-3 border-primary shadow"
+     style="width: 262px; height: 300px; object-fit: cover; border-radius: 8px;">
+      </div>
+
+      <!-- Text -->
+      <div class="col-md-7">
+        <p class="fs-5">
+          “My name is <strong>Sony Kumari</strong>. I am from <strong>Bokaro, Jharkhand, India</strong>. I graduated in
+          <strong>2020</strong> with a bachelor’s degree in Computer Science and Engineering from <strong>Kolhan University</strong>.
+          I’m a <strong>software engineer</strong> and <strong> I’m a passionate Software Developer </strong> 
+          with a focus on building scalable backend systems and intuitive full-stack web applications. 
+          <strong>I specialize in Java, Spring Boot, and modern frontend technologies</strong> to deliver reliable, secure, and high-performance digital solutions.”
+
+”
+        </p>
+        <p class="text-muted">
+          I love <strong>Web Development</strong>, <strong>Competitive Coding</strong>, and admire <strong>Sketch Drawing</strong> and <strong>Listening to Music</strong>.
+          I also enjoy reading novels and storybooks by <strong>Munshi Premchand</strong>.
+        </p>
+
+        <!-- Links -->
+        <div class="d-flex flex-wrap gap-3 mt-3">
+          <a href="#" class="btn btn-outline-dark px-4">HackerRank</a>
+          <a href="#" class="btn btn-outline-dark px-4">LeetCode</a>
+          <a href="#" class="btn btn-outline-dark px-4">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<!-- Contact -->
+<section class="contact py-5 bg-light" id="contact" ng-app="contactApp" ng-controller="ContactController">
+  <div class="container">
+    <h2 class="section-title text-center mb-4">Contact Me 
+        <br>
+            <small style="color: black; font-size: 20px;">Get In Touch</small>
+        
+    </h2>
+
+
+    <!-- Contact Form -->
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <form name="contactForm" ng-submit="submitForm()" novalidate>
+
+          <div class="form-group mb-3">
+            <label for="name">Name :</label>
+            <input type="text" class="form-control" id="name" ng-model="contact.name" placeholder="Your Name Please" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="email">Email :</label>
+            <input type="email" class="form-control" id="email" ng-model="contact.email" placeholder="Your Email Please" required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="message">Message :</label>
+            <textarea class="form-control" id="message" rows="5" ng-model="contact.message" placeholder="Your message" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" ng-disabled="contactForm.$invalid">Send Message</button>
+
+        </form>
+
+        <!-- Feedback -->
+        <div class="alert alert-success mt-3" ng-if="successMessage">{{successMessage}}</div>
+        <div class="alert alert-danger mt-3" ng-if="errorMessage">{{errorMessage}}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Contact Info Modal -->
+<div class="modal fade" id="contactInfoModal" tabindex="-1" aria-labelledby="contactInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="contactInfoModalLabel">Contact Information</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p><strong>Name:</strong> Sony Kumari</p>
+        <p><strong>Email:</strong> <a href="mailto:sonykumari@gmail.com">sonykumari@gmail.com</a></p>
+        <p><strong>Mobile:</strong> <a href="tel:6200732235">6200732235</a></p>
+        <p><strong>Location:</strong> Bokaro, Jharkhand, India</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 Sony Kumari | Portfolio Website</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+  angular.module("contactApp", [])
+    .controller("ContactController", function($scope, $http) {
+      $scope.contact = {};
+      $scope.successMessage = "";
+      $scope.errorMessage = "";
+
+      $scope.submitForm = function () {
+        $http.post("http://localhost:8086/project/contactme/contact/save", $scope.contact)
+          .then(function(response) {
+            $scope.successMessage = "Message sent successfully!";
+            $scope.errorMessage = "";
+            $scope.contact = {};
+          }, function(error) {
+            $scope.errorMessage = "Failed to send message.";
+            $scope.successMessage = "";
+          });
+      };
+    });
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const element = document.querySelector(".typed-role");
+
+    const textPairs = [
+      { wrong: "Computer Science Engneer", correct: "Computer Science Engineer.|" },
+      { wrong: "Full Stack Jaa Developer", correct: "Full Stack Java Developer.|" }
+    ];
+
+    let current = 0;
+
+    function typeText(wrongText, correctText, callback) {
+      element.textContent = "";
+      element.style.width = "0ch";
+      let i = 0;
+
+      function typeWrong() {
+        if (i < wrongText.length) {
+          element.textContent += wrongText.charAt(i);
+          element.style.width = `${i + 1}ch`;
+          i++;
+          setTimeout(typeWrong, 100);
+        } else {
+          setTimeout(() => {
+            element.textContent = correctText;
+            element.style.width = `${correctText.length}ch`;
+            setTimeout(callback, 2000);
+          }, 800);
+        }
+      }
+
+      typeWrong();
+    }
+
+    function loopText() {
+      const pair = textPairs[current];
+      typeText(pair.wrong, pair.correct, () => {
+        current = (current + 1) % textPairs.length;
+        loopText();
+      });
+    }
+
+    loopText();
+  });
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dashboardApp">
+<head>
+  <meta charset="UTF-8">
+  <title>eShop Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CSS & Scripts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    body {
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .dark-mode {
+      background-color: #2c3e50 !important;
+      color: white;
+    }
+
+    /* Theme color variables */
+    .theme-black { --bs-primary: #0d0c13; }
+    .theme-blue { --bs-primary: #007bff; }
+    .theme-purple { --bs-primary: #6c5ce7; }
+    .theme-green { --bs-primary: #10ac84; }
+    .theme-orange { --bs-primary: #ff9f43; }
+
+    /* Apply theme color */
+    .btn-primary,
+    .text-primary,
+    .bg-primary,
+    .border-primary {
+      background-color: var(--bs-primary) !important;
+      border-color: var(--bs-primary) !important;
+      color: white !important;
+    }
+
+    .icon-box,
+    h2,
+    h5,
+    .card-title,
+    a {
+      color: var(--bs-primary);
+    }
+
+    /* Card styling */
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .icon-box {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body ng-controller="DashboardController" ng-class="['theme-' + selectedTheme, {'dark-mode': isDarkMode}]">
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">{{user.name}} (Admin)</h2>
+    
+    <div>
+      <button class="btn btn-primary btn-sm me-1" onclick="window.location.href='dashboard.html'">Back</button>
+      <button class="btn btn-outline-dark btn-sm me-2" ng-click="toggleDarkMode()">
+        {{isDarkMode ? '☀️ Light' : '🌙 Dark'}}
+      </button>
+      <select class="form-select d-inline-block w-auto btn-sm" ng-model="selectedTheme">
+        <option value="black">Black</option>
+        <option value="blue">Blue</option>
+        <option value="purple">Purple</option>
+        <option value="green">Green</option>
+        <option value="orange">Orange</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Dashboard Stats -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3" ng-repeat="stat in stats">
+      <div class="card p-3 text-center">
+        <div class="icon-box">{{stat.icon}}</div>
+        <h5>{{stat.value}}</h5>
+        <p class="text-muted">{{stat.label}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile + Notifications -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card p-4 h-100">
+        <div class="d-flex justify-content-between">
+          <h5>👤 Profile</h5>
+          <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit</button>
+        </div>
+        <p><strong>Name:</strong> {{user.name}}</p>
+        <p><strong>Email:</strong> {{user.email}}</p>
+        <p><strong>Mobile:</strong> {{user.mobile}}</p>
+        <p><strong>Joined:</strong> {{user.joined}}</p>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card p-4 h-100">
+        <h5 class="mb-3">🔔 Notifications</h5>
+        <div>
+          <div ng-repeat="n in paginatedNotifications()" style="white-space: pre-line; line-height: 1.5; font-size: 14px; margin-bottom: 0.5rem; border-bottom: 1px dashed #ccc; padding-bottom: 0.4rem;">
+            {{n.message}}
+          </div>
+        </div>
+        <div class="mt-3 text-center" ng-if="notificationTotalPages() > 1">
+          <button class="btn btn-sm btn-outline-secondary me-1" ng-click="prevNotificationPage()" ng-disabled="notificationPage === 0">←</button>
+          <span style="font-size: 13px;">Page {{notificationPage + 1}} of {{notificationTotalPages()}}</span>
+          <button class="btn btn-sm btn-outline-secondary ms-1" ng-click="nextNotificationPage()" ng-disabled="notificationPage >= notificationTotalPages() - 1">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart + Deliveries -->
+  <div class="row g-4 mb-4 align-items-stretch">
+    <div class="col-md-6">
+      <div class="card p-4 h-100">
+        <h5>📊 Monthly Spending</h5>
+        <canvas id="spendingChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card p-4 h-100 d-flex flex-column">
+        <h5>🗓 Upcoming Deliveries</h5>
+        <ul class="list-group list-group-flush flex-grow-1">
+          <li class="list-group-item" ng-repeat="d in paginatedDeliveries()">
+            {{d.date}} – {{d.product}} <span class="badge bg-success">{{d.status}}</span>
+          </li>
+        </ul>
+        <div class="mt-2 text-center">
+          <button class="btn btn-sm btn-outline-secondary me-1" ng-click="prevDeliveryPage()" ng-disabled="deliveryPage === 0">←</button>
+          <span>Page {{deliveryPage + 1}} of {{deliveryTotalPages()}}</span>
+          <button class="btn btn-sm btn-outline-secondary ms-1" ng-click="nextDeliveryPage()" ng-disabled="deliveryPage >= deliveryTotalPages() - 1">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders -->
+  <div class="card p-4">
+    <h5 class="mb-3">📋 Recent Orders</h5>
+    <table class="table table-sm">
+      <thead>
+        <tr><th>#</th><th>Product</th><th>Amount</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="o in paginatedOrders()">
+          <td>{{$index + 1 + (currentPage * pageSize)}}</td>
+          <td>{{o.product}}</td>
+          <td>₹{{o.amount}}</td>
+          <td><span class="badge bg-primary">{{o.status}}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <button class="btn btn-sm btn-outline-secondary" ng-click="prevPage()" ng-disabled="currentPage === 0">← Previous</button>
+      <span>Page {{currentPage + 1}} of {{totalPages()}}</span>
+      <button class="btn btn-sm btn-outline-secondary" ng-click="nextPage()" ng-disabled="currentPage >= totalPages() - 1">Next →</button>
+    </div>
+    <div class="mt-2 text-center">
+      <button class="btn btn-sm btn-light me-1"
+              ng-repeat="n in [].constructor(totalPages()) track by $index"
+              ng-click="currentPage = $index"
+              ng-class="{'btn-primary': currentPage === $index, 'btn-outline-primary': currentPage !== $index}">
+        {{$index + 1}}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Edit Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" ng-submit="saveProfile()">
+      <div class="modal-header">
+        <h5 class="modal-title">✏️ Edit Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label>Name:</label>
+        <input type="text" class="form-control mb-3" ng-model="user.name" required>
+        <label>Email:</label>
+        <input type="email" class="form-control mb-3" ng-model="user.email" required>
+        <label>Mobile:</label>
+        <input type="text" class="form-control mb-3" ng-model="user.mobile" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  angular.module("dashboardApp", [])
+    .controller("DashboardController", function ($scope, $http) {
+      $scope.isDarkMode = false;
+      $scope.selectedTheme = "blue";
+      $scope.user = {
+        name: "Sony Kumari",
+        email: "sony@example.com",
+        mobile: "5214568795",
+        joined: "Jan 2024"
+      };
+
+      $scope.wishlist = ["Smartwatch", "Backpack"];
+
+      $scope.toggleDarkMode = function () {
+        $scope.isDarkMode = !$scope.isDarkMode;
+      };
+
+      $scope.saveProfile = function () {
+        alert("Profile updated!");
+        bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+      };
+
+      // Dummy order fetch
+      $http.get("http://localhost:8086/home/dashboard/recent-orders").then(function (response) {
+        $scope.orders = response.data;
+        $scope.totalSpent = $scope.orders.reduce((sum, o) => sum + o.amount, 0);
+        $scope.currentPage = 0;
+        $scope.pageSize = 5;
+
+        $scope.paginatedOrders = () => $scope.orders.slice($scope.currentPage * $scope.pageSize, ($scope.currentPage + 1) * $scope.pageSize);
+        $scope.totalPages = () => Math.ceil($scope.orders.length / $scope.pageSize);
+        $scope.nextPage = () => { if ($scope.currentPage < $scope.totalPages() - 1) $scope.currentPage++; };
+        $scope.prevPage = () => { if ($scope.currentPage > 0) $scope.currentPage--; };
+
+        // Notifications
+        $http.get("http://localhost:8086/home/dashboard/notifications").then(function (res) {
+          $scope.notifications = res.data;
+          $scope.notificationPage = 0;
+          $scope.notificationPageSize = 1;
+
+          $scope.paginatedNotifications = () => $scope.notifications.slice($scope.notificationPage * $scope.notificationPageSize, ($scope.notificationPage + 1) * $scope.notificationPageSize);
+          $scope.notificationTotalPages = () => Math.ceil($scope.notifications.length / $scope.notificationPageSize);
+          $scope.nextNotificationPage = () => { if ($scope.notificationPage < $scope.notificationTotalPages() - 1) $scope.notificationPage++; };
+          $scope.prevNotificationPage = () => { if ($scope.notificationPage > 0) $scope.notificationPage--; };
+
+          $scope.stats = [
+            { icon: "📦", value: $scope.orders.length, label: "Total Orders" },
+            { icon: "❤️", value: $scope.wishlist.length, label: "Wishlist" },
+            { icon: "💳", value: "₹" + $scope.totalSpent, label: "Total Spent" },
+            { icon: "🔔", value: $scope.notifications.length, label: "Notifications" }
+          ];
+        });
+      });
+
+      // Deliveries
+      $http.get("http://localhost:8086/home/dashboard/upcoming-deliveries").then(function (res) {
+        $scope.deliveries = res.data;
+        $scope.deliveryPage = 0;
+        $scope.deliveryPageSize = 3;
+
+        $scope.paginatedDeliveries = () => $scope.deliveries.slice($scope.deliveryPage * $scope.deliveryPageSize, ($scope.deliveryPage + 1) * $scope.deliveryPageSize);
+        $scope.deliveryTotalPages = () => Math.ceil($scope.deliveries.length / $scope.deliveryPageSize);
+        $scope.nextDeliveryPage = () => { if ($scope.deliveryPage < $scope.deliveryTotalPages() - 1) $scope.deliveryPage++; };
+        $scope.prevDeliveryPage = () => { if ($scope.deliveryPage > 0) $scope.deliveryPage--; };
+      });
+
+      // Chart
+      setTimeout(() => {
+        const ctx = document.getElementById('spendingChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: '₹ Spent',
+              data: [1200, 1500, 800, 2000, 1600, $scope.totalSpent],
+              backgroundColor: 'rgba(108, 92, 231, 0.2)',
+              borderColor: '#6c5ce7',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+      }, 500);
+    });
+</script>
+
+</body>
+</html>

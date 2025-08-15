@@ -1,0 +1,27 @@
+
+  .category-img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  .thumbnail-img {
+    width: 210px;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+
+  .img-wrapper {
+    width: 210px;
+    margin: 10px;
+    text-align: center;
+  }
+
+  .image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* or center */
+    gap: 20px; /* controls space between items */
+  }

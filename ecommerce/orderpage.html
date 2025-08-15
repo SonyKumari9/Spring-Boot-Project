@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html ng-app="orderApp">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders - eShopping</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/orderpage.css">
+</head>
+
+<body ng-controller="OrderController" style="background-color: blue;">
+
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+    <a class="navbar-brand fw-bold text-primary" href="#">eShop</a>
+
+    <!-- Search -->
+    <form class="d-flex mx-auto" style="width: 80%;" ng-submit="search()">
+      <!-- <input class="form-control me-2" type="search" placeholder="Search for products" ng-model="searchText"> -->
+      <!-- <button class="btn btn-outline-primary" type="submit">Search</button> -->
+    </form>
+
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+      <button class="btn btn-outline-secondary btn-space" ng-click="cardpage()">Categories</button>
+      <button class="btn btn-danger" ng-click="confirmwebapp()">Web App</button>
+    </div>
+
+
+  </nav>
+
+<div class="container"  style="width: 90%;" ng-if="orders.length > 0">
+  <h2 class="mb-4 text-center">🛒 Your Orders</h2>
+
+
+  <!-- <div class="order-card p-4 border bg-white rounded shadow mb-4" ng-repeat="order in orders"> -->
+    <div class="order-card p-4 border bg-white rounded shadow mb-4" ng-repeat="order in paginatedOrders()">
+
+    
+
+    <!--Apply  Order -->
+    <div class="order-header d-flex justify-content-between mb-3" ng-if="order.status_orderd=='Ordered'">
+      <div>
+        <strong>Order Date:</strong> {{ order.orderDate }}<br>
+        <strong>Status:</strong> 
+        <span class="order-status"
+              ng-class="{
+                
+                'text-danger': order.status_orderd === 'Ordered',
+                
+              }">
+          <!-- Preferably show current status -->
+          {{ order.status_orderd }}
+        </span>
+      </div>
+      <div>
+        <strong>Order ID:</strong> {{ order.orderId }}
+      </div>
+    </div>
+
+    <div class="row" ng-if="order.status_orderd=='Ordered'">
+      <div class="col-md-3 text-center">
+        <img ng-src="{{ order.product }}" class="order-img img-fluid" alt="Product Image">
+      </div>
+
+      <div class="col-md-6">
+        <h5>Product : {{ order.product }}</h5>
+        <p><b>Price:</b> ₹{{ order.price }}</p>
+        <p><b>Delivery Charges:</b> ₹{{ order.delivery_charge }}</p>
+      </div>
+
+      <div class="col-md-3">
+        <strong>Shipping To:</strong>
+        <p>Name : {{ order.name }}</p>
+        <p>Address : {{ order.location }}</p>
+        <p>City : {{ order.city }}, Pin code: {{ order.pincode }}</p>
+
+        
+      </div>
+    </div>
+
+    <hr>
+    
+
+    <!-- Shipped -->
+     <div class="order-header d-flex justify-content-between mb-3" ng-if="order.status_shipped=='Shipped'">
+      <div>
+        <strong>Order Date:</strong> {{ order.orderDate }}<br>
+        <strong>Status:</strong> 
+        <span class="order-status"
+              ng-class="{
+                
+                'text-warning': order.status_shipped === 'Shipped',
+                
+              }">
+          <!-- Preferably show current status -->
+          {{ order.status_shipped }}
+        </span>
+      </div>
+      <div>
+        <strong>Order ID:</strong> {{ order.orderId }}
+      </div>
+    </div>
+
+    <div class="row" ng-if="order.status_shipped=='Shipped'">
+      <div class="col-md-3 text-center">
+        <img ng-src="{{ order.product }}" class="order-img img-fluid" alt="Product Image">
+      </div>
+
+      <div class="col-md-6">
+        <h5>Product : {{ order.product }}</h5>
+        <p><b>Price:</b> ₹{{ order.price }}</p>
+        <p><b>Delivery Charges: </b> ₹{{ order.delivery_charge }}</p>
+      </div>
+
+      <div class="col-md-3">
+        <strong>Shipping To:</strong>
+        <p>Name : {{ order.name }}</p>
+        <p>Address : {{ order.location }}</p>
+        <p>City : {{ order.city }}, Pin code: {{ order.pincode }}</p>
+
+        
+      </div>
+    </div>
+    
+    <!-- shipping Process -->
+    <div class="mt-1" ng-if="order.status_shipped=='Shipped'">
+  <h5 class="mb-3 fw-semibold text-primary">Shipping Progress</h5>
+
+  <div class="shipping-progress d-flex justify-content-between mb-4">
+    <div class="step" 
+         ng-repeat="step in order.shippingAddresses track by $index"
+         ng-class="{'completed': $index <= (order.shippingAddresses.length - 1)}">
+      <div class="circle">
+        <i class="bi bi-geo-alt-fill"></i>
+      </div>
+      <div class="label mt-2">
+        {{ step }}
+      </div>
+    </div>
+  </div>
+  <p>Item was opened and verified at the time of Delivery.</p>
+  <ul class="list-unstyled ps-3 text-success small">
+    <li> <small style="color: black;"><b> Order Confirmed {{order.orderDate}}.</b></small>
+      <br>
+      <small style="color: black;">Your Order has been placed.</small>
+      <br>
+      <i class="bi bi-dot"></i>{{order.address1}}
+    </li>
+
+    <li><small style="color: black;"> <b>Shipped {{order.shipped_date}}.</b></small>
+      <br>
+      <small style="color: black;">Your Order has been shipped.</small>
+      <br>
+      <i class="bi bi-dot"></i> {{order.address2}}
+    </li>
+    </ul>
+    <ul class="list-unstyled ps-3 text-success small">
+
+    <li><smal style="color: black;"><b>Out for Delivery {{order.outdelivery_date}}.</b></smal>
+      <br>
+      <small style="color: black;">Your item out for Delivery.</small>
+      <br>
+      <i class="bi bi-dot"></i> {{order.address3}}
+    </li>
+
+    <li><small style="color: black;"><b>Delivered {{order.delivered_date}} from stock.</b></small>
+      <br>
+      <small style="color: black;">Your Item has been Delivered.</small>
+      <br>
+      <i class="bi bi-dot"></i> {{order.address4}}
+    </li>
+    </ul>
+
+    <ul class="list-unstyled ps-3 text-success small">
+
+    <li><small style="color: rgb(10, 232, 24);"><b>Received {{order.recieved_date}}.</b></small> 
+      <br>
+      <small style="color: rgb(10, 232, 24);">Your Order has been Received.</small>
+      <br>
+      <i class="bi bi-dot"></i> {{order.address5}}
+    </li>
+  </ul>
+
+  <p>Return policy valid till {{order.return_date}}</p>
+</div>
+
+
+
+    <hr>
+
+    <!-- Delivered -->
+
+    <div class="order-header d-flex justify-content-between mb-3" ng-if="order.status_delivered=='Delivered'">
+      
+      <div>
+        <strong>Order Date:</strong> {{ order.orderDate }}<br>
+        <strong>Status:</strong> 
+        <span class="order-status"
+              ng-class="{
+                'text-success': order.status_delivered === 'Delivered',
+                
+                'text-primary': order.status_received === 'Received'
+              }">
+          <!-- Preferably show current status -->
+          {{ order.status_received || order.status_delivered }}
+        </span>
+      </div>
+      <div>
+        <strong>Order ID:</strong> {{ order.orderId }}
+      </div>
+    </div>
+    
+
+    <!-- Delivered information -->
+     <div class="row" ng-if="order.status_delivered=='Delivered'">
+      <div class="col-md-3 text-center">
+        <img ng-src="{{ order.product }}" class="order-img img-fluid" alt="Product Image">
+      </div>
+
+      <div class="col-md-6">
+        <h5>Product : {{ order.product }}</h5>
+        <p><b>Price:</b> ₹{{ order.price }}</p>
+        <p><b>Delivery Charges: </b>₹{{ order.delivery_charge }}</p>
+      </div>
+
+      <div class="col-md-3">
+        <strong>Shipping To:</strong>
+        <p>Name : {{ order.name }}</p>
+        <p>Address: {{ order.location }}</p>
+        <p>City : {{ order.city }}, Pin code: {{ order.pincode }}</p>
+
+        <button class="btn btn-primary btn-sm mt-2"
+        ng-if="order.status_delivered === 'Delivered' && !order.status_received"
+        ng-click="markAsReceived(order)">
+  Mark as Received
+</button>
+
+      </div>
+    </div>
+
+
+
+
+
+  </div>
+
+
+  <!-- Page Number Pagination -->
+<div class="text-center mt-4" ng-if="orders.length > itemsPerPage">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" ng-class="{ disabled: currentPage === 0 }">
+      <a class="page-link" href="" ng-click="setPage(0)">
+        <i class="bi bi-chevron-double-left"></i>
+      </a>
+    </li>
+
+    <li class="page-item" ng-class="{ disabled: currentPage === 0 }">
+      <a class="page-link" href="" ng-click="setPage(currentPage - 1)">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+
+    <li class="page-item" ng-repeat="n in [].constructor(pageCount()) track by $index"
+        ng-class="{ active: $index === currentPage }">
+      <a class="page-link" href="" ng-click="setPage($index)">
+        {{$index + 1}}
+      </a>
+    </li>
+
+    <li class="page-item" ng-class="{ disabled: currentPage >= pageCount() - 1 }">
+      <a class="page-link" href="" ng-click="setPage(currentPage + 1)">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+
+    <li class="page-item" ng-class="{ disabled: currentPage >= pageCount() - 1 }">
+      <a class="page-link" href="" ng-click="setPage(pageCount() - 1)">
+        <i class="bi bi-chevron-double-right"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+</div>
+
+<!-- <script>
+  const app = angular.module('orderApp', []);
+
+  app.controller('OrderController', function($scope, $http) {
+    const orderId = 2; // it is manuwally create
+
+    const url = `http://localhost:8086/orderlocation/v5/${orderId}`;
+
+    
+    $scope.order = {
+      shippingAddresses: []
+    };
+
+    // Fetch order by ID
+    $http.get(url)
+      .then(function(response) {
+        $scope.order = response.data;
+
+        
+        if (!$scope.order.shippingAddresses) {
+          $scope.order.shippingAddresses = [];
+        }
+      }, function(error) {
+        console.error("Error fetching order:", error);
+        alert("Could not load order.");
+      });
+
+    
+    $scope.markAsReceived = function() {
+      $scope.order.status_received = 'Received';
+
+      
+    };
+
+
+      $scope.cardpage = function () {
+          window.location.href = "cardpage.html";
+        };
+
+        
+        $scope.confirmwebapp = function () {
+          
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "mainpage_eshopping.html";
+        };
+
+    // Optional: Update shipping addresses to backend
+    $scope.updateShippingSteps = function() {
+      $http.put(`http://localhost:8086/orderlocation/v5/updateShippingSteps/${orderId}`, {
+        shippingAddresses: $scope.order.shippingAddresses
+      }).then(function(res) {
+        alert("Shipping steps updated!");
+      }, function(err) {
+        console.error("Update failed:", err);
+        alert("Failed to update shipping steps.");
+      });
+    };
+  });
+</script> -->
+
+<script>
+const app = angular.module('orderApp', []);
+
+app.controller('OrderController', function($scope, $http) {
+  const queryParams = new URLSearchParams(window.location.search);
+  const mobile = queryParams.get("mobile");
+
+  $scope.orders = [];
+
+  if (mobile) {
+    
+    $http.get("http://localhost:8086/orderlocation/v5/byMobile/" + mobile)
+      .then(function(response) {
+        $scope.orders = response.data;
+      })
+      .catch(function(error) {
+        console.error("Error fetching orders by mobile:", error);
+        alert("Could not fetch your orders.");
+      });
+  }
+
+  
+  $scope.markAsReceived = function(order) {
+    order.status_received = 'Received';
+    
+  };
+
+  
+  $scope.updateShippingSteps = function(order) {
+    $http.put("http://localhost:8086/orderlocation/v5/updateShippingSteps/" + order.orderId, {
+      shippingAddresses: order.shippingAddresses
+    }).then(function(res) {
+      alert("Shipping steps updated!");
+    }, function(err) {
+      console.error("Update failed:", err);
+      alert("Failed to update shipping steps.");
+    });
+  };
+
+
+  $scope.currentPage = 0;
+$scope.itemsPerPage = 1;
+
+$scope.paginatedOrders = function () {
+  const start = $scope.currentPage * $scope.itemsPerPage;
+  return $scope.orders.slice(start, start + $scope.itemsPerPage);
+};
+
+$scope.pageCount = function () {
+  return Math.ceil($scope.orders.length / $scope.itemsPerPage);
+};
+
+$scope.setPage = function (n) {
+  if (n >= 0 && n < $scope.pageCount()) {
+    $scope.currentPage = n;
+  }
+};
+
+
+  
+  $scope.cardpage = function () {
+    window.location.href = "cardpage.html";
+  };
+
+  $scope.confirmwebapp = function () {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "mainpage_eshopping.html";
+  };
+});
+</script>
+
+
+
+
+
+</body>
+</html>

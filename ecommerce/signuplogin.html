@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <title>Create User</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/signuplogin.css">
+</head>
+<body ng-controller="myCtrl">
+
+    <form id="signuploginForm">
+        <small style="margin-left: 175px; color: #e75c5c;"   onclick="window.location.href='loginpage.html'">If Already id then Login</small>
+        <h3 class="text-center mb-4">Customer Registration</h3>
+
+        <input type="text" class="form-control mb-2" id="name" placeholder="Name" required>
+        <input type="email" class="form-control mb-2" id="email" placeholder="Email" required>
+        <input type="password" class="form-control mb-2" id="password" placeholder="Password" required>
+        <input type="text" class="form-control mb-2" id="mobile" placeholder="Mobile" required>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('signuploginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                mobile: document.getElementById('mobile').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:8086/ecommerce/v1/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                console.log('Success:', result);
+                alert("User created successfully!");
+                window.location.href='loginpage.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert("Error occurred while creating user.");
+            }
+        });
+    </script>
+
+    <script>
+        angular.module('myApp', [])
+            .controller('myCtrl', function($scope) {
+                $scope.greeting = 'SignUp Create for Login   Ecommerce from AngularJS!';
+            });
+    </script>
+
+</body>
+</html>

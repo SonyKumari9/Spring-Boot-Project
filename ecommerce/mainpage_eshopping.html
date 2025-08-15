@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mainApp">
+<head>
+  <meta charset="UTF-8">
+  <title>eShop - Home</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="css/mainpage.css">
+
+</head>
+<body ng-controller="MainController" class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">eShopping</a>
+
+    <!-- Top Links -->
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="homepage.html">Home</a>
+      </li>
+
+      <!-- Category Dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+          Categories
+        </a>
+        <ul class="dropdown-menu">
+          <li ng-repeat="category in categories">
+            <a class="dropdown-item" href="categoriespage.html">{{ category }}</a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Wishlist -->
+      <li class="nav-item">
+        <!-- <a class="nav-link" href="wishlist_page.html"><i class="fas fa-heart text-danger"></i> Wishlist</a> -->
+         <a class="nav-link" href="cardpage.html"><i class="fas fa-heart text-danger"></i> Wishlist</a>
+      </li>
+
+      <!-- Orders -->
+      <li class="nav-item">
+        <a class="nav-link" href="orderpage.html">Orders</a>
+      </li>
+
+      <!-- Mail -->
+      <li class="nav-item">
+        <a class="nav-link" href="mailpage.html">Mail eShop</a>
+      </li>
+    </ul>
+
+    <!-- Search -->
+    <form class="d-flex mx-auto" style="width: 50%;">
+      <input class="form-control me-2" type="search" placeholder="Search for products" aria-label="Search">
+      <button class="btn btn-light" type="submit">Search</button>
+    </form>
+
+    <!-- Cart and Profile -->
+    <div class="d-flex align-items-center">
+      <button class="btn btn-outline-light me-2" onclick="window.location.href='cardpage_payment.html'">
+        <i class="fas fa-shopping-cart"></i>
+      </button>
+
+
+      <!-- Profile Dropdown -->
+      <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="fas fa-user" href="profilelogin_page.html"></i> Profile
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="profilepage.html">My Profile</a></li>
+          <li><a class="dropdown-item" href="signuplogin.html">Customer Account</a></li>
+          <li><a class="dropdown-item" href="create_ecommerce.html">Vender Account</a></li>
+          <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="logout.html">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Carousel -->
+<div class="container my-4">
+  <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner" style="margin-bottom: 30px; margin-top: 30px;">
+
+    <!-- Big Sale Banner -->
+    <div class="carousel-item active position-relative">
+      <img src="http://localhost:8086/images/offer.jpg" style="width: 100px;" class="d-block rounded-circle" alt="Big Sale Banner">
+      <div class="carousel-caption d-none d-md-block">
+        <h2 class="fw-bold text-light">Big Sale Up to <span class="text-warning">70% Off</span></h2>
+        <p class="lead text-light">Grab the best deals now on top categories</p>
+        <a href="homepage.html" class="btn btn-warning fw-bold px-4">Shop Now</a>
+      </div>
+    </div>
+
+    <!-- New Arrivals Banner -->
+    <div class="carousel-item position-relative">
+      <img src="http://localhost:8086/images/newarrive.jpg" style="width: 200px;" class="d-block rounded-circle" alt="Big Sale Banner">
+      <div class="carousel-caption d-none d-md-block">
+        <h2 class="fw-bold text-light">New Arrivals</h2>
+        <p class="lead text-light">Fresh styles added daily just for you</p>
+        <a href="cardpage.html" class="btn btn-light fw-bold px-4">Explore</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+</div>
+
+<!-- Categories -->
+<div class="container mb-4">
+  <h4 class="mb-3">Top Categories</h4>
+  <div class="row g-3">
+    <div class="col-md-3" ng-repeat="category in categories">
+      <div class="category-card shadow-sm">
+        <a href="categoriespage.html" style="text-decoration: none; color: inherit;">{{ category }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Grid -->
+<div class="container">
+
+<!-- Fixed Category Menu Bar -->
+<div class="container-fluid bg-white shadow-sm sticky-top py-2" style="z-index: 1040;">
+  <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+    <!-- Left: Menu with Dropdown -->
+    <div class="dropdown ms-3">
+  <button class="btn btn-outline-primary dropdown-toggle px-4 fw-semibold" type="button"
+    id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-bars me-2"></i> Shop by Category
+  </button>
+  <ul class="dropdown-menu dropdown-menu-start mt-2 shadow" aria-labelledby="categoryDropdown" style="min-width: 200px;">
+    <li><a class="dropdown-item" href ng-click="filterByCategory('all')">All</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('fashion')">Fashion</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('electronics')">Electronics</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('home')">Home & Kitchen</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('grocery')">Grocery</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('essentials')">Grocery & Essentials</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('beauty')">Beauty & Personal Care</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('toys')">Toys & Baby Products</a></li>
+    <li><a class="dropdown-item" href ng-click="filterByCategory('accessories')">Accessories</a></li>
+  </ul>
+</div>
+
+
+
+
+
+
+
+    <!-- Center: Optional Message or Filter Tag -->
+    <div class="text-center mx-auto d-none d-md-block">
+      <span class="badge bg-warning text-dark px-4 py-2 rounded-pill">New arrivals added daily!</span>
+    </div>
+
+    <!-- Right: Wishlist Icon -->
+    <div class="me-3">
+      <button class="btn btn-outline-danger position-relative" onclick="window.location.href='cardpage.html'">
+        <i class="fas fa-heart fs-5"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          {{ wishlistCount || 0 }}
+        </span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+  <!-- ✂ Keep all your existing <head>, <nav>, carousel, category cards etc. unchanged -->
+
+<!-- Product Grid with Pagination -->
+<div class="container mt-4">
+  <h4 class="mb-3">Featured Products for You</h4>
+
+  <!-- Product Grid -->
+  <div class="row">
+    <div class="col-md-3 mb-4" ng-repeat="product in getPaginatedProducts()">
+      <div class="product-card p-2 border shadow-sm rounded">
+        <img ng-src="{{ product.image }}" class="product-img mb-2 w-100" alt="Product Image">
+        <h6>{{ product.title }}</h6>
+        <p class="text-muted">₹{{ product.price }}</p>
+        <button class="btn btn-sm btn-primary w-100">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="d-flex justify-content-center mt-3">
+    <ul class="pagination">
+      <li class="page-item" ng-class="{disabled: currentPage == 0}">
+        <button class="page-link" ng-click="prevPage()">Previous</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Page {{ currentPage + 1 }} of {{ totalPages() }}</span>
+      </li>
+      <li class="page-item" ng-class="{disabled: currentPage >= totalPages() - 1}">
+        <button class="page-link" ng-click="nextPage()">Next</button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- AngularJS Script with Pagination -->
+<script>
+  const app = angular.module('mainApp', []);
+
+  app.controller('MainController', function($scope, $http) {
+    $scope.categories = [
+      'Fashion',
+      'Electronics',
+      'Home & Kitchen',
+      'Grocery',
+      'Grocery & Essentials',
+      'Beauty & Personal Care',
+      'Toys & Baby Products',
+      'Accessories'
+    ];
+
+    $scope.products = [];
+    $scope.filteredProducts = [];
+    $scope.wishlistCount = 3;
+
+    $scope.currentPage = 0;
+    $scope.pageSize = 8;
+
+    $scope.selectedCategory = 'all';
+
+    $scope.totalPages = function() {
+      return Math.ceil($scope.filteredProducts.length / $scope.pageSize);
+    };
+
+    $scope.getPaginatedProducts = function() {
+      const start = $scope.currentPage * $scope.pageSize;
+      return $scope.filteredProducts.slice(start, start + $scope.pageSize);
+    };
+
+    $scope.nextPage = function() {
+      if ($scope.currentPage < $scope.totalPages() - 1) {
+        $scope.currentPage++;
+      }
+    };
+
+    $scope.prevPage = function() {
+      if ($scope.currentPage > 0) {
+        $scope.currentPage--;
+      }
+    };
+
+    $scope.filterByCategory = function(categoryKey) {
+      $scope.selectedCategory = categoryKey;
+      $scope.currentPage = 0;
+
+      if (categoryKey === 'all') {
+        $scope.filteredProducts = $scope.products;
+      } else {
+        const lower = categoryKey.toLowerCase();
+        $scope.filteredProducts = $scope.products.filter(p =>
+          p.category && p.category.toLowerCase().includes(lower)
+        );
+      }
+    };
+
+    function loadProductsFromDB() {
+      $http.get("http://localhost:8086/ecommerce/search?query=")
+        .then(function(response) {
+          $scope.products = response.data.map(item => ({
+            title: item.name || item.title || 'No Title',
+            price: item.price || 0,
+            image: item.imageUrl || 'https://via.placeholder.com/200x200?text=No+Image',
+            category: item.category || ''
+          }));
+
+          // Default: show all
+          $scope.filteredProducts = $scope.products;
+        }, function(error) {
+          console.error("Failed to load products:", error);
+        });
+    }
+
+    loadProductsFromDB();
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

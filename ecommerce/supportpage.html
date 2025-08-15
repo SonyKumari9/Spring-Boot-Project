@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="chatApp">
+<head>
+  <meta charset="UTF-8">
+  <title>🛍️ eShop Chat Support</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      background: #f2f4f8;
+    }
+
+    .chat-card {
+      max-width: 750px;
+      margin: auto;
+      margin-top: 40px;
+      border-radius: 12px;
+    }
+
+    table {
+      font-size: 14px;
+    }
+
+    .user-msg {
+      background: #e1f5fe;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+
+    .admin-reply {
+      background: #d7f17b;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body ng-controller="ChatController">
+
+  <!-- Chat Input Section -->
+  <div class="card shadow chat-card p-4">
+    <h4 class="text-center mb-4 text-primary">💬 eShop Chat Support
+      <small style="margin-left: 363px; color: #96e75c;" onclick="window.location.href='settings.html'">Exit</small>
+    </h4>
+
+    <form ng-submit="sendChat()">
+      <div class="mb-3">
+        <label>Name</label>
+        <input type="text" class="form-control" ng-model="chat.name" required>
+      </div>
+
+      <div class="mb-3">
+        <label>Mobile No.</label>
+        <input type="text" class="form-control" ng-model="chat.mobile" required>
+      </div>
+
+      <div class="mb-3">
+        <label>Your Message</label>
+        <textarea class="form-control" ng-model="chat.chatbox" required></textarea>
+      </div>
+
+      <button class="btn btn-primary w-100">Send Message</button>
+    </form>
+
+    <div class="alert alert-success mt-3" ng-if="successMessage">{{ successMessage }}</div>
+    <div class="alert alert-danger mt-3" ng-if="errorMessage">{{ errorMessage }}</div>
+  </div>
+
+  <!-- Chat History -->
+  <div class="card shadow chat-card p-4 mt-4" ng-if="chatHistory.length > 0">
+    <h5 class="mb-3 text-dark">📜 Chat History</h5>
+
+    <table class="table table-bordered table-hover table-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Name</th>
+          <th>Mobile</th>
+          <th>User Message</th>
+          <th>Admin Reply</th>
+          <th>🕒 Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="c in chatHistory | orderBy:'-timestamp'">
+          <td>{{ c.name }}</td>
+          <td>{{ c.mobile }}</td>
+          <td><div class="user-msg">{{ c.chatbox }}</div></td>
+          <td>
+            <div class="admin-reply">{{ c.adminReply || '⏳ Awaiting reply' }}</div>
+            <input class="form-control form-control-sm mt-1" ng-model="c.newReply" placeholder="Reply..." />
+            <button class="btn btn-success btn-sm mt-1" ng-click="sendAdminReply(c)">Reply</button>
+          </td>
+          <td>{{ c.timestamp | date:'dd MMM, yyyy h:mm a' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AngularJS Controller -->
+  <script>
+    angular.module('chatApp', [])
+      .controller('ChatController', function($scope, $http) {
+        $scope.chat = { name: '', mobile: '', chatbox: '' };
+        $scope.chatHistory = [];
+
+        $scope.sendChat = function () {
+          if (!$scope.chat.name || !$scope.chat.mobile || !$scope.chat.chatbox) {
+            $scope.errorMessage = "Please fill all fields.";
+            $scope.successMessage = "";
+            return;
+          }
+
+          $http.post("http://localhost:8086/ecommerce/chat/send", $scope.chat)
+            .then(function(response) {
+              $scope.successMessage = response.data;
+              $scope.errorMessage = "";
+              $scope.chat.chatbox = "";
+              $scope.loadChatHistory($scope.chat.mobile);
+            })
+            .catch(function(error) {
+              console.error("Error:", error);
+              $scope.errorMessage = (error.data && typeof error.data === 'string')
+                ? error.data
+                : "send chat.";
+              $scope.successMessage = "";
+            });
+        };
+
+        $scope.loadChatHistory = function (mobile) {
+          if (!mobile) return;
+          $http.get("http://localhost:8086/ecommerce/chat/history/" + mobile)
+            .then(function(response) {
+              $scope.chatHistory = response.data;
+            })
+            .catch(function(error) {
+              console.error("Error fetching chat history:", error);
+            });
+        };
+
+        $scope.sendAdminReply = function (chat) {
+          if (!chat.newReply) return;
+
+          const updatedChat = {
+            id: chat.id,
+            name: chat.name,
+            mobile: chat.mobile,
+            chatbox: chat.chatbox,
+            adminReply: chat.newReply
+          };
+
+          $http.post("http://localhost:8086/ecommerce/chat/send", updatedChat)
+            .then(function(response) {
+              chat.adminReply = chat.newReply;
+              chat.newReply = '';
+              $scope.successMessage = "Admin reply sent!";
+            })
+            .catch(function(error) {
+              console.error("Error sending admin reply:", error);
+              $scope.errorMessage = " Failed to send admin reply.";
+            });
+        };
+
+        $scope.$watch('chat.mobile', function(newVal) {
+          if (newVal && newVal.length >= 6) {
+            $scope.loadChatHistory(newVal);
+          }
+        });
+
+        // Auto-refresh every 1 seconds
+        setInterval(function () {
+          if ($scope.chat.mobile && $scope.chat.mobile.length >= 6) {
+            $scope.loadChatHistory($scope.chat.mobile);
+            $scope.$applyAsync();
+          }
+        }, 1000);
+      });
+  </script>
+
+</body>
+</html>

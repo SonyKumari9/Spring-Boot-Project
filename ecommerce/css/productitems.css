@@ -1,0 +1,132 @@
+
+    .navbar {
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+    .product-gallery img { max-width: 100%; height: auto; }
+    .product-info { padding-left: 20px; }
+    .product-info h2 { font-size: 2rem; }
+    .product-price { font-size: 1.5rem; color: #e74c3c; }
+    .product-discount { text-decoration: line-through; color: #7f8c8d; }
+    .product-description { margin-top: 20px; }
+    .product-specs { margin-top: 20px; }
+    .product-specs dt { font-weight: bold; }
+    .product-specs dd { margin-left: 20px; }
+
+    .product-items{
+    background-color: rgb(241, 181, 203);
+     }
+
+     .carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgb(255, 85, 0);        /* Circle background */
+  background-size: 100% 100%;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.product-info{
+    font-family: 'Segoe UI', sans-serif;
+  background: #f9f9f9;
+  padding: 5px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.product-info-items{
+    margin-inline-start: 30px;
+}
+
+
+.product-description{
+  font-family: 'Segoe UI', sans-serif;
+  background: #f9f9f9;
+  padding: 5px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+
+.description-items {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f9f9f9;
+  padding: 5px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+.description-items h4 {
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 600;
+}
+.description-items ul {
+  list-style: none;
+  padding-left: 0;
+}
+.description-items li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.category-items {
+      display: none;
+      margin-left: 20px;
+    }
+    .category-name {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+
+      /*font-weight: normal;     Optional: adjust text weight */
+
+      /* color: inherit;         Use the default text color */
+
+      /* text-decoration: none;   Remove underline */
+
+      /*cursor: pointer;         Still clickable */
+    }
+
+
+    .brand-items {
+      display: none;
+      margin-left: 20px;
+    }
+    .brand-name {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+      
+      /*font-weight: normal;     Optional: adjust text weight */
+
+      /* color: inherit;         Use the default text color */
+
+      /* text-decoration: none;   Remove underline */
+
+      /*cursor: pointer;         Still clickable */
+    }
+
+
+    
+
+
+    a {
+    color: #007BFF; /* Blue color */
+    text-decoration: underline;
+    font-weight: bold;
+  }
+
+  /* Optional: change color when hovering */
+  a:hover {
+    color: #0056b3; /* Darker blue */
+    text-decoration: none;
+  }
+
+  
+
+
+     
+
+  
+    

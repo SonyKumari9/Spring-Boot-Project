@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="cartApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Cart - View Products</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      background: #f5f7fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .cart-container {
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+    .product-card {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .product-card:hover {
+      transform: scale(1.02);
+    }
+    .product-image {
+      height: 200px;
+      object-fit: cover;
+      width: 100%;
+    }
+    .price-tag {
+      color: #28a745;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .brand-text {
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body ng-controller="CartController">
+
+<div class="cart-container">
+  <div class="d-flex justify-content-end">
+          <label class="me-2 fw-bold text-primary">Close</label>
+          <select class="form-select form-select-sm w-auto" onchange="
+            if(this.value === 'yes') {
+              window.location.href = 'settings.html';
+            } else if(this.value === 'no') {
+              window.location.href = 'mainpage_eshopping.html';
+            }
+          ">
+            <option value="">Select</option>
+            <option value="yes">Go Setting</option>
+            <option value="no">Main app</option>
+          </select>
+        </div>
+
+  <h2 class="mb-4 text-center text-primary">🛒 Your Cart</h2>
+  <p class="text-center text-muted">View products you added to cart</p>
+
+  <div class="row g-4">
+    <div class="col-md-4" ng-repeat="item in cartItems">
+      <div class="card product-card">
+        <img class="product-image" ng-src="{{item.imageUrl}}" alt="{{item.categoryTitle}}">
+        <div class="card-body">
+          <h5 class="card-title">{{ item.categoryTitle }}</h5>
+          <p class="card-text">{{ item.categoryDescription }}</p>
+          <p class="brand-text">Brand: {{ item.brand }} | Author: {{ item.author || 'N/A' }}</p>
+          <p class="price-tag">Price: ₹{{ item.price }}</p>
+          <button class="btn btn-outline-primary btn-sm mt-2" ng-click="viewProduct(item)">View Product</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Product Modal -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content p-3">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ selectedProduct.categoryTitle }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row">
+          <div class="col-md-5">
+            <img ng-src="{{ selectedProduct.imageUrl }}" class="img-fluid rounded" alt="Product">
+          </div>
+          <div class="col-md-7">
+            <p><strong>Brand:</strong> {{ selectedProduct.brand }}</p>
+            <p><strong>Description:</strong> {{ selectedProduct.categoryDescription }}</p>
+            <p><strong>Author:</strong> {{ selectedProduct.author }}</p>
+            <p><strong>Price:</strong> ₹{{ selectedProduct.price }}</p>
+            <button class="btn btn-sm btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#paymentOptionModal">
+              Add / Update Payment Option
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal fade" id="paymentOptionModal" tabindex="-1" aria-labelledby="paymentOptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Add or Update Payment Option</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form ng-submit="submitPaymentOption()">
+          <div class="modal-body">
+            <div class="mb-2 text-center">
+              <img ng-src="{{ selectedProduct.imageUrl }}" alt="product" style="max-height: 100px;" class="rounded shadow-sm">
+              <p class="fw-bold mt-2 mb-0">{{ selectedProduct.brand }}</p>
+              <p class="text-muted mb-1">₹{{ selectedProduct.price }}</p>
+            </div>
+            <div class="mb-3">
+              <div>
+              <label class="form-label">Customer Name</label>
+              <input type="text" class="form-control" ng-model="newPayment.name" required>
+              </div>
+
+              <div>
+              <label class="form-label">Mobile Number</label>
+              <input type="text" class="form-control" ng-model="newPayment.mobile" required>
+            </div>
+
+            </div>
+
+            
+
+            <div class="mb-3">
+              <label class="form-label">Payment Mode</label>
+              <select class="form-select" ng-model="newPayment.mode" required>
+                <option value="">Select</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="UPI">UPI</option>
+                <option value="Net Banking">Net Banking</option>
+                <option value="Cash on Delivery">Cash on Delivery</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Amount</label>
+              <input type="number" class="form-control" ng-model="newPayment.amount" required>
+            </div>
+            <div class="mb-3" ng-if="newPayment.mode !== 'Cash on Delivery'">
+              <label class="form-label">Card / UPI / Bank Info</label>
+              <input type="text" class="form-control" ng-model="newPayment.details" placeholder="XXXX-XXXX-XXXX / UPI ID">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">💾 Save Payment</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  angular.module('cartApp', [])
+    .controller('CartController', function($scope, $http) {
+      $scope.cartItems = [];
+      $scope.selectedProduct = {};
+      $scope.newPayment = {};
+
+      $http.get("http://localhost:8086/wishlist/v7/all")
+        .then(function(response) {
+          $scope.cartItems = response.data;
+        })
+        .catch(function(error) {
+          console.error("Failed to load cart items", error);
+        });
+
+      $scope.viewProduct = function(product) {
+        $scope.selectedProduct = product;
+        $scope.newPayment = {
+          amount: product.price,
+          productImage: product.imageUrl,
+          brand: product.brand
+        };
+        const modal = new bootstrap.Modal(document.getElementById('productModal'));
+        modal.show();
+      };
+
+      $scope.submitPaymentOption = function () {
+        if (!$scope.newPayment.name || !$scope.newPayment.mobile || !$scope.newPayment.mode || !$scope.newPayment.amount) {
+          alert("Please fill all required fields.");
+          return;
+        }
+
+        const payload = {
+          name: $scope.newPayment.name,
+          mobile: $scope.newPayment.mobile,
+          mode: $scope.newPayment.mode,
+          amount: $scope.newPayment.amount,
+          details: $scope.newPayment.details || "",
+          brand: $scope.selectedProduct.brand,
+          price: $scope.selectedProduct.price,
+          imageUrl: $scope.selectedProduct.imageUrl
+        };
+
+        $http.post("http://localhost:8086/payment/save", payload)
+          .then(function (response) {
+            if (response.status === 200 || response.status === 201) {
+              alert("Payment saved!");
+              window.location.href="multiple_order_details.html";
+
+              // Close modal safely
+              const modalEl = document.getElementById('paymentOptionModal');
+              const modalInstance = bootstrap.Modal.getInstance(modalEl);
+              if (modalInstance) {
+                modalInstance.hide();
+              }
+
+              $scope.newPayment = {};
+
+              // Exit page after 1 second
+              setTimeout(() => {
+                window.close();
+              }, 1000);
+            } else {
+              alert(" Server error.");
+            }
+          })
+          .catch(function (error) {
+            console.error("Error saving:", error);
+            //alert("Something went wrong while saving.");
+            window.location.href="multiple_order_details.html";
+          });
+      };
+    });
+</script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+/* Sidebar fixed position */
+.sidebar {
+  position: fixed;
+  top: 10px;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #8fb6dd;
+  color: #fff;
+  transition: all 0.3s ease;
+  overflow-y: auto; /* Make the sidebar scrollable */
+  padding: 10px 0;  /* Adds spacing to the top and bottom of sidebar */
+}
+
+/* Expand sidebar width on hover */
+.sidebar:hover {
+  width: 300px;
+}
+
+/* Styling for links in the sidebar */
+.sidebar .nav-link {
+  color: #fff;
+  padding: 15px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Hover effect for sidebar links */
+.sidebar .nav-link:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Styling for items inside the sidebar */
+.sidebar .nav-item {
+  border-bottom: 1px solid #495057;
+}
+
+/* Remove border for last item */
+.sidebar .nav-item:last-child {
+  border-bottom: none;
+}
+
+/* Content area, with space for the fixed sidebar */
+.content {
+  margin-left: 250px;
+  padding: 20px;
+}
+
+/* Heading inside the content area */
+.content h1 {
+  color: #343a40;
+}
+
+/* Custom styling for product categories */
+.productcategories {
+  color: #ff002f;
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* Accordion button styles */
+.accordion-button:not(.collapsed) {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+/* Remove focus outline on accordion button */
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+/* Accordion item styling */
+.accordion-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* No padding for the accordion body */
+.accordion-body {
+  padding: 0;
+}
+
+/* List items in the accordion */
+.list-group-item {
+  padding: 10px 15px;
+}
+
+/* Button styling for category buttons */
+.category-btn {
+  font-weight: bold;
+  text-transform: uppercase;
+}

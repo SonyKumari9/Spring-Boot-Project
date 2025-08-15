@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html ng-app="cartApp">
+<head>
+  <meta charset="UTF-8">
+  <title>eShop Cart</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    .thumbnail-img {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+    }
+    .img-wrapper {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 0.5rem;
+      transition: box-shadow 0.3s;
+    }
+    .img-wrapper:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .heart-icon {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      transition: color 0.3s ease;
+    }
+    .heart-icon.red {
+      color: red;
+    }
+  </style>
+</head>
+<body class="p-4" ng-controller="CartController">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light px-4 mb-4">
+    <a class="navbar-brand fw-bold text-primary" href="#">eShop</a>
+    <form class="d-flex mx-auto" style="width: 50%;" ng-submit="search()">
+      <input class="form-control me-2" type="search" placeholder="Search for products" ng-model="searchText">
+    </form>
+    <a href="mainpage_eshopping.html" class="btn btn-outline-success">Back App</a>
+  </nav>
+
+  <div class="container">
+    <!-- Filters -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <select class="form-select" ng-model="selectedCategory">
+          <option value="">All Categories</option>
+          <option ng-repeat="category in uniqueCategories">{{ category }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" ng-model="selectedSize">
+          <option value="">All Sizes</option>
+          <option ng-repeat="size in sizes">{{ size }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" ng-model="selectedPriceRange">
+          <option value="">All Prices</option>
+          <option value="199-2000">₹199–₹2000</option>
+          <option value="2001+">₹2000+</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" ng-model="sortOrder">
+          <option value="">Sort by</option>
+          <option value="price">Price: Low to High</option>
+          <option value="-price">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <h4>Product Gallery</h4>
+    <div class="row">
+      <div class="col-md-3" ng-repeat="product in paginatedProducts()">
+        <div class="img-wrapper">
+          <img ng-src="{{product.imageUrl}}" class="thumbnail-img">
+          <div class="heart-icon" ng-class="{'red': product.wishlisted}" ng-click="toggleWishlist(product)">♥</div>
+          <div><strong>{{product.brand}}</strong></div>
+          <div>₹{{product.price}} | Size: {{product.size}}</div>
+          <button class="btn btn-sm btn-primary mt-2" ng-click="addToCart(product)">Add to Cart</button>
+          <div class="mt-2">
+            <a ng-href="https://api.whatsapp.com/send?text=Check out this product: {{product.imageUrl}}" target="_blank">
+              <i class="fab fa-whatsapp text-success fs-5 me-2"></i>
+            </a>
+            <a ng-href="https://www.facebook.com/sharer/sharer.php?u={{product.imageUrl}}" target="_blank">
+              <i class="fab fa-facebook text-primary fs-5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="text-center my-3">
+      <button class="btn btn-outline-secondary" ng-disabled="currentPage === 0" ng-click="currentPage = currentPage - 1">Prev</button>
+      <span class="mx-2">Page {{currentPage + 1}} / {{pageCount()}}</span>
+      <button class="btn btn-outline-secondary" ng-disabled="currentPage >= pageCount() - 1" ng-click="currentPage = currentPage + 1">Next</button>
+    </div>
+
+    <!-- Wishlist -->
+    <h4>Your Wishlist</h4>
+    <div class="row">
+      <div class="col-md-3" ng-repeat="item in wishlistProducts">
+        <div class="img-wrapper bg-light">
+          <img ng-src="{{item.imageUrl}}" class="thumbnail-img">
+          <div><strong>{{item.brand}}</strong></div>
+          <div>₹{{item.price}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content" ng-if="checkoutProduct">
+          <div class="modal-header">
+            <h5 class="modal-title">{{checkoutProduct.brand}}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <img ng-src="{{checkoutProduct.imageUrl}}" class="img-fluid rounded">
+              </div>
+              <div class="col-md-6">
+                <p><strong>Price:</strong> ₹{{checkoutProduct.price}}</p>
+
+                <!-- Size -->
+                <label>Choose Size:</label><br>
+                <button ng-repeat="s in sizes" class="btn btn-outline-secondary btn-sm me-1 mt-1"
+                        ng-class="{'btn-primary text-white': checkoutProduct.size === s}"
+                        ng-click="checkoutProduct.size = s">{{s}}</button>
+
+                <!-- Step 1: Address -->
+                <div class="mt-4" ng-if="step === 1">
+                  <h5>Step 1: Address</h5>
+                  <input type="text" class="form-control mb-2" placeholder="House/Street/Area" ng-model="checkoutProduct.location">
+                  <input type="text" class="form-control mb-2" placeholder="City" ng-model="checkoutProduct.city">
+                  <input type="text" class="form-control mb-2" placeholder="Pincode" ng-model="checkoutProduct.pincode">
+                  <button class="btn btn-primary mt-2" ng-click="nextStep()">Next</button>
+                </div>
+
+                
+
+                <!-- Step 2: Payment -->
+                <div class="mt-4" ng-if="step === 2">
+                  <h5>Step 2: Payment</h5>
+                  <select ng-model="checkoutProduct.payment" class="form-select">
+                    <option value="COD">Cash on Delivery</option>
+                    <option value="Card">Credit/Debit Card</option>
+                  </select>
+                  <p class="mt-2">Delivery Charge: ₹{{checkoutProduct.payment === 'COD' ? 50 : 40}}</p>
+                  <div class="mt-2">
+                    <button class="btn btn-secondary me-2" ng-click="prevStep()">Back</button>
+                    <button class="btn btn-primary" ng-click="nextStep()">Next</button>
+                  </div>
+                  <div class="mt-2">
+                  <input type="text" class="form-control mb-2" placeholder="Name" ng-model="checkoutProduct.name">
+                  <input type="text" class="form-control mb-2" placeholder="Mobile No." ng-model="checkoutProduct.mobile">
+                  </div>
+                </div>
+
+                <!-- Step 3: Summary -->
+                <div class="mt-4" ng-if="step === 3">
+                  <h5>Step 3: Summary</h5>
+                  <p><strong>Order ID:</strong> {{checkoutProduct.orderId}}</p>
+                  <p><strong>Order Date:</strong> {{checkoutProduct.orderDate}}</p>
+
+                  <p><strong>Name:</strong> {{checkoutProduct.name}}</p>
+                  <p><strong>Mobile:</strong> {{checkoutProduct.mobile}}</p>
+
+                  <p><strong>Brand:</strong> {{checkoutProduct.brand}}</p>
+                  <p><strong>Size:</strong> {{checkoutProduct.size}}</p>
+                  <p><strong>Price:</strong> ₹{{checkoutProduct.price}}</p>
+                  <p><strong>Address:</strong> {{checkoutProduct.address}}</p>
+                  <p><strong>Payment:</strong> {{checkoutProduct.payment}}</p>
+                  <p><strong>Delivery charge:</strong> ₹{{checkoutProduct.delivery_charge}}</p>
+                  <p ng-if="discount > 0"><strong>Discount:</strong> -₹{{discount}}</p>
+                  <hr>
+                  <p><strong>Total:</strong> ₹{{+checkoutProduct.price + +checkoutProduct.delivery_charge - discount}}</p>
+                  <button class="btn btn-secondary me-2" ng-click="prevStep()">Back</button>
+                  <button class="btn btn-success" ng-click="placeOrder()">Place Order</button>
+                </div>
+
+                <!-- Coupon -->
+                <div class="mb-2">
+                  <label>Apply Coupon Code:</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" ng-model="couponCode" placeholder="Enter code like SAVE50">
+                    <button class="btn btn-outline-primary" type="button" ng-click="applyCoupon()">Apply</button>
+                  </div>
+                  <p class="text-success" ng-if="discount > 0">Discount ₹{{discount}} applied!</p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+angular.module('cartApp', []).controller('CartController', function ($scope, $http, $timeout) {
+  $scope.products = [];
+  $scope.searchText = "";
+  $scope.selectedCategory = "";
+  $scope.selectedSize = "";
+  $scope.selectedPriceRange = "";
+  $scope.sortOrder = "";
+  $scope.currentPage = 0;
+  $scope.itemsPerPage = 4;
+  $scope.sizes = ['S', 'M', 'L', 'XL'];
+  $scope.step = 1;
+  $scope.checkoutProduct = null;
+  $scope.wishlistProducts = [];
+  $scope.couponCode = "";
+  $scope.discount = 0;
+
+  $scope.loadProducts = function () {
+    $http.get('http://localhost:8086/wishlist/v7/all').then(function (response) {
+      $scope.products = response.data.map(function (item) {
+        item.wishlisted = false;
+        item.size = $scope.sizes[Math.floor(Math.random() * $scope.sizes.length)];
+        return item;
+      });
+      $scope.uniqueCategories = [...new Set($scope.products.map(p => p.categoryTitle))];
+    });
+  };
+
+  $scope.filterProducts = function (product) {
+    if ($scope.selectedCategory && product.categoryTitle !== $scope.selectedCategory) return false;
+    if ($scope.selectedSize && product.size !== $scope.selectedSize) return false;
+    if ($scope.selectedPriceRange === "199-2000" && (product.price < 199 || product.price > 2000)) return false;
+    if ($scope.selectedPriceRange === "2001+" && product.price <= 2000) return false;
+    return true;
+  };
+
+  $scope.paginatedProducts = function () {
+    let filtered = $scope.products.filter($scope.filterProducts)
+      .filter(p => !$scope.searchText || p.brand.toLowerCase().includes($scope.searchText.toLowerCase()))
+      .sort((a, b) => {
+        if ($scope.sortOrder === "price") return a.price - b.price;
+        if ($scope.sortOrder === "-price") return b.price - a.price;
+        return 0;
+      });
+    let start = $scope.currentPage * $scope.itemsPerPage;
+    return filtered.slice(start, start + $scope.itemsPerPage);
+  };
+
+  $scope.pageCount = function () {
+    return Math.ceil($scope.products.filter($scope.filterProducts).length / $scope.itemsPerPage);
+  };
+
+  $scope.toggleWishlist = function (item) {
+    item.wishlisted = !item.wishlisted;
+    if (item.wishlisted) {
+      $scope.wishlistProducts.push(item);
+      $http.post('http://localhost:8086/wishlist/v7/add', item);
+    } else {
+      $scope.wishlistProducts = $scope.wishlistProducts.filter(p => p.categoryId !== item.categoryId);
+      $http.delete('http://localhost:8086/wishlist/v7/delete/' + item.categoryId);
+    }
+  };
+
+  $scope.addToCart = function (item) {
+    $scope.checkoutProduct = angular.copy(item);
+    $scope.checkoutProduct.size = '';
+    $scope.checkoutProduct.name = '';
+    $scope.checkoutProduct.mobile = '';
+    $scope.checkoutProduct.location = '';
+    $scope.checkoutProduct.city = '';
+    $scope.checkoutProduct.pincode = '';
+    $scope.checkoutProduct.address = '';
+    $scope.checkoutProduct.payment = '';
+    $scope.checkoutProduct.delivery_charge = 0;
+    $scope.checkoutProduct.orderId = '';
+    $scope.checkoutProduct.orderDate = '';
+    $scope.step = 1;
+
+    var modal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+    modal.show();
+  };
+
+  $scope.applyCoupon = function () {
+    if ($scope.couponCode === 'SAVE50') {
+      $scope.discount = 50;
+    } else if ($scope.couponCode === 'NEWUSER100') {
+      $scope.discount = 100;
+    } else {
+      alert("Invalid Coupon Code");
+      $scope.discount = 0;
+    }
+  };
+
+  $scope.nextStep = function () {
+    const p = $scope.checkoutProduct;
+
+    if ($scope.step === 1) {
+      if (!p.location || !p.city || !p.pincode) {
+        alert("Please fill all address details.");
+        return;
+      }
+      p.address = p.location + ', ' + p.city + ' - ' + p.pincode;
+    }
+
+    if ($scope.step === 2) {
+      if (!p.payment) {
+        alert("Please select a payment method.");
+        return;
+      }
+      p.delivery_charge = (p.payment === "COD") ? 50 : 40;
+
+      const generatedOrderId = 'ORD' + Date.now();
+      const orderDate = new Date().toLocaleString('en-IN', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+
+      $scope.checkoutProduct.orderId = generatedOrderId;
+      $scope.checkoutProduct.orderDate = orderDate;
+    }
+
+    if ($scope.step < 3) $scope.step++;
+  };
+
+  $scope.prevStep = function () {
+    if ($scope.step > 1) $scope.step--;
+  };
+
+  // $scope.placeOrder = function () {
+  //   const p = $scope.checkoutProduct;
+
+  //   if (!p.size || !p.location || !p.city || !p.pincode || !p.payment) {
+  //     alert("Please fill all details before placing the order.");
+  //     return;
+  //   }
+
+  //   const orderData = {
+  //     orderId: p.orderId,
+  //     orderDate: p.orderDate,
+  //     brand: p.brand,
+  //     size: p.size,
+  //     price: p.price,
+  //     imageUrl: p.imageUrl,
+  //     location: p.location,
+  //     city: p.city,
+  //     pincode: p.pincode,
+  //     address: p.address,
+  //     payment: p.payment,
+  //     delivery_charge: p.delivery_charge,
+  //     discount: $scope.discount,
+  //     finalTotal: +p.price + +p.delivery_charge - $scope.discount
+  //   };
+
+  //   $http.post("http://localhost:8086/orderlocation/v5/placeOrder", orderData)
+  //     .then(function () {
+  //       alert("Order placed successfully!");
+
+  //       // Reset modal and checkout state
+  //       $scope.checkoutProduct = null;
+  //       $scope.discount = 0;
+  //       $scope.couponCode = "";
+  //       $scope.step = 1;
+
+  //       // Close modal
+  //       $timeout(function () {
+  //         const modalInstance = bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
+  //         if (modalInstance) {
+  //           modalInstance.hide();
+  //         }
+  //       }, 100);
+  //     })
+  //     .catch(function () {
+  //       alert("Error placing order.");
+  //     });
+  // };
+
+
+
+  $scope.placeOrder = function () {
+  const p = $scope.checkoutProduct;
+
+  if (!p.size || !p.location || !p.city || !p.pincode || !p.payment) {
+    alert("Please fill all details before placing the order.");
+    return;
+  }
+
+  const orderData = {
+    orderId: p.orderId,
+    orderDate: p.orderDate,
+    brand: p.brand,
+    size: p.size,
+    price: p.price,
+    imageUrl: p.imageUrl,
+    location: p.location,
+    name: p.name,
+    mobile: p.mobile,
+    city: p.city,
+    pincode: p.pincode,
+    address: p.address,
+    payment: p.payment,
+    delivery_charge: p.delivery_charge,
+    discount: $scope.discount,
+    finalTotal: +p.price + +p.delivery_charge - $scope.discount,
+    status_orderd: "Ordered",
+    status_shipped: "Shipped",
+    status_delivered: "Delivered",
+    //status_received: "Received"
+  };
+
+  $http.post("http://localhost:8086/orderlocation/v5/placeOrder", orderData)
+    .then(function () {
+      alert("Order placed successfully!");
+
+      // localStorage.setItem("savedOrderId", response.data.id);// send id to orderpage.html
+      $timeout(function () {
+        window.location.href = "multiple_order_details.html";
+      }, 500);
+    })
+    .catch(function () {
+      alert("Error placing order.");
+    });
+};
+
+
+  $scope.loadProducts();
+});
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

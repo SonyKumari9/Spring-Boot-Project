@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="profileApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <style>
+    .profile-pic {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #6c5ce7;
+    }
+    .file-input {
+      display: none;
+    }
+    .change-photo-btn {
+      cursor: pointer;
+      font-size: 13px;
+      color: #6c5ce7;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body ng-controller="ProfileController" class="bg-light py-5">
+
+<div class="container">
+  <div class="card shadow p-4 mx-auto" style="max-width: 500px;">
+    <small style="margin-left: 423px; color: #e75c5c;"   onclick="window.location.href='mainpage_eshopping.html'">Exit</small>
+    <h3 class="mb-4 text-center">👤 Update Profile</h3>
+
+    <!-- Profile Photo -->
+    <div class="text-center mb-4">
+      <img ng-src="http://localhost:8086{{user.imageUrl || '/images/default.png'}}" class="profile-pic mb-2" id="preview">
+      <div class="change-photo-btn" ng-click="triggerFileInput()">Change Photo</div>
+      <input type="file" class="file-input" id="fileInput" accept="image/*" onchange="angular.element(this).scope().uploadImageFile(this)">
+    </div>
+
+    <!-- Step 1: Enter email and load data -->
+    <form ng-submit="loadUser()">
+      <div class="mb-3">
+        <label class="form-label">Enter Your Email</label>
+        <input type="email" class="form-control" ng-model="user.email" required>
+      </div>
+      <button class="btn btn-secondary w-100 mb-3" type="submit">Load My Profile</button>
+    </form>
+
+    <!-- Step 2: Update profile data -->
+    <form ng-submit="updateProfile()" ng-show="userLoaded">
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input type="text" class="form-control" ng-model="user.name" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Mobile</label>
+        <input type="text" class="form-control" ng-model="user.mobile" required>
+      </div>
+      <button class="btn btn-primary w-100" type="submit">Save Profile</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  angular.module("profileApp", [])
+    .controller("ProfileController", function ($scope, $http) {
+      $scope.user = {};
+      $scope.userLoaded = false;
+
+      $scope.loadUser = function () {
+        if (!$scope.user.email) {
+          alert("Please enter your email.");
+          return;
+        }
+
+        $http.get("http://localhost:8086/ecommerce/v1/user/" + $scope.user.email)
+          .then(function (res) {
+            $scope.user = res.data;
+            $scope.userLoaded = true;
+          })
+          .catch(function () {
+            alert("❌ Email not found in database. Try again.");
+            $scope.userLoaded = false;
+          });
+      };
+
+      // Upload image to backend and save in DB
+      $scope.uploadImageFile = function (input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("email", $scope.user.email);
+
+        $http.post("http://localhost:8086/ecommerce/v1/upload-profile-image", formData, {
+          transformRequest: angular.identity,
+          headers: { 'Content-Type': undefined }
+        }).then(function (res) {
+          $scope.user.imageUrl = res.data.imageUrl;
+          alert("✅ Image uploaded successfully!");
+        }).catch(function () {
+          alert("❌ Failed to upload image.");
+        });
+      };
+
+      $scope.triggerFileInput = function () {
+        document.getElementById('fileInput').click();
+      };
+
+      $scope.updateProfile = function () {
+        const payload = {
+          name: $scope.user.name,
+          mobile: $scope.user.mobile,
+          imageUrl: $scope.user.imageUrl
+        };
+
+        $http.put("http://localhost:8086/ecommerce/v1/update-profile/" + $scope.user.email, payload)
+          .then(() => alert("✅ Profile updated successfully!"))
+          .catch(() => alert("❌ Failed to update profile."));
+      };
+    });
+</script>
+
+</body>
+</html>

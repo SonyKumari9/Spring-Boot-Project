@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="logoutApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Logout - Vendor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #f0f2f5, #ffffff);
+    }
+    .logout-box {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .logout-icon {
+      font-size: 40px;
+      color: #dc3545;
+      margin-bottom: 15px;
+    }
+    .btn-space {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body ng-controller="LogoutController">
+
+  <div class="logout-box">
+    <i class="bi bi-box-arrow-right logout-icon"></i>
+    <h4 class="mb-3 text-danger">Are you sure you want to logout?</h4>
+    
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+      <button class="btn btn-outline-secondary btn-space" ng-click="cancel()">Cancel</button>
+      <button class="btn btn-danger" ng-click="confirmLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- AngularJS and Bootstrap Icons -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <script>
+    angular.module("logoutApp", [])
+      .controller("LogoutController", function($scope) {
+        
+        
+        $scope.cancel = function () {
+          window.location.href = "dashboard.html";
+        };
+
+        
+        $scope.confirmLogout = function () {
+          
+          localStorage.clear();
+          sessionStorage.clear();
+
+          // Redirect to login page
+          window.location.href = "vender_login.html";
+        };
+      });
+  </script>
+</body>
+</html>

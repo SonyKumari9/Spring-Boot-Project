@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html ng-app="accountApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Account - Choose Role</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #cce5ff, #e6ffe6);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .role-box {
+      max-width: 1000px;
+      margin: 80px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .role-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #007bff;
+      margin-bottom: 40px;
+    }
+
+    .card-option {
+      transition: all 0.3s ease-in-out;
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      cursor: pointer;
+      padding: 30px;
+    }
+
+    .card-option:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    }
+
+    .card-option i {
+      font-size: 50px;
+      margin-bottom: 15px;
+      color: #0d6efd;
+    }
+
+    .card-option.customer i {
+      color: #0d6efd;
+    }
+
+    .card-option.vendor i {
+      color: #28a745;
+    }
+
+    .card-option h5 {
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .card-option a {
+      text-decoration: none;
+      font-weight: 500;
+      color: #007bff;
+    }
+
+    .card-option a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body ng-controller="AccountController">
+
+  <div class="container role-box text-center">
+    <div class="role-title">Select Account Type</div>
+
+    <div class="row justify-content-center g-4">
+      <!-- Customer Card -->
+      <div class="col-md-5">
+        <div class="card card-option customer" ng-click="goToCustomer()">
+          <i class="bi bi-person-circle"></i>
+          <h5>Customer Account</h5>
+          <p>Create a new customer profile to shop and manage orders.</p>
+          <a href="signuplogin.html">Go to Customer Signup</a>
+        </div>
+      </div>
+
+      <!-- Vendor Card -->
+      <div class="col-md-5">
+        <div class="card card-option vendor" ng-click="goToVendor()">
+          <i class="bi bi-shop-window"></i>
+          <h5>Vendor Account</h5>
+          <p>Register as a seller to list products and manage sales.</p>
+          <a href="create_ecommerce.html">Go to Vendor Signup</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script>
+    angular.module("accountApp", [])
+      .controller("AccountController", function($scope, $window) {
+        $scope.goToCustomer = function () {
+          $window.location.href = "signuplogin.html";
+        };
+
+        $scope.goToVendor = function () {
+          $window.location.href = "create_ecommerce.html";
+        };
+      });
+  </script>
+</body>
+</html>

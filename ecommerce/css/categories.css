@@ -1,0 +1,124 @@
+  body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    .productcategories{
+        color: #ffa600;
+        margin-top: 10px;
+        text-align: center;
+        font-weight: bold;
+    }
+    .sidebar {
+      position: fixed;
+      top: 10;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      background-color: #26c9d1;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    .sidebar:hover {
+      width: 300px;
+    }
+    .sidebar .nav-link {
+      color: #fff;
+      padding: 15px;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .sidebar .nav-link:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
+    .sidebar .nav-item {
+      border-bottom: 1px solid #495057;
+    }
+    .sidebar .nav-item:last-child {
+      border-bottom: none;
+    }
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+    .content h1 {
+      color: #343a40;
+    }
+
+
+    .category-btn {
+      text-align: left;
+      width: 100%;
+      font-weight: bold;
+      color: #333;
+    }
+    .category-btn:hover {
+      background-color: #f0f0f0;
+    }
+    .list-group-item a {
+      text-decoration: none;
+      color: #007bff;
+    }
+    .list-group-item a:hover {
+      text-decoration: underline;
+    }
+
+
+
+     /* for Gapping  in Manu List*/
+     /* Add vertical spacing between accordion categories */
+.accordion-item {
+  margin-bottom: 12px; /* space between category blocks */
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+/* Padding inside the accordion button (header) */
+.accordion-button {
+  padding: 12px 16px;
+  font-weight: 500;
+  background-color: #f8f9fa;
+}
+
+/* Spacing inside accordion body */
+.accordion-body {
+  padding: 0 !important; /* keep padding 0 as you're using list-group-flush */
+}
+
+/* Style and space list items */
+.list-group-item {
+  padding: 10px 16px; /* add vertical and horizontal padding */
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+/* Optional: remove border from last item */
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+/* Hover effect */
+.list-group-item:hover {
+  background-color: #f1f1f1;
+}
+
+/* Ensure all anchor tags look clean */
+.list-group-item a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.list-group-item a:hover {
+  text-decoration: underline;
+}
+
+.content img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+  }
